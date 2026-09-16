@@ -40,7 +40,11 @@ public class PlayerService
             _gameRepository.Remove(game);
         }
 
-        game?.Players.Remove(player);
+        var toRemove = game?.Players.FirstOrDefault(p => p.Id == player.Id);
+        if (toRemove is not null)
+        {
+            game.Players.Remove(toRemove);
+        }
 
         return game;
     }

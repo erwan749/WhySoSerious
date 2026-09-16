@@ -54,6 +54,13 @@ public class ClientSession
     public void MarkPlayerInactiveAfterOtherQuit(GameDto updatedGame)
     {
         if (CurrentGame is null) return;
-        CurrentGame.Players.First(p => !updatedGame.Players.Select(player => player.Id).Contains(p.Id)).IsActive = false;
+
+        var leftPlayer = CurrentGame.Players.FirstOrDefault(p => !updatedGame.Players.Select(player => player.Id).Contains(p.Id));
+        if (leftPlayer is not null)
+        {
+            leftPlayer.IsActive = false;
+        }
+
+        CurrentGame = updatedGame;
     }
 }

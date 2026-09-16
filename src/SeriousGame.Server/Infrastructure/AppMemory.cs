@@ -12,6 +12,7 @@ public class AppMemory
 {
     public ConcurrentDictionary<string, Player> Players { get; } = new();
     public ConcurrentDictionary<string, Game> Games { get; } = new();
+    // public ConcurrentDictionary<string, object> GameLocks { get; } = new(); --> à voir pour fix le MaximumPlayers avec un lock par partie
 
     // Référentiel de compétences (donnée de seed, en lecture seule).
     public IReadOnlyList<Skill> Skills { get; } =
