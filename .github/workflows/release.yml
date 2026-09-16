@@ -10,7 +10,7 @@ permissions:
 
 env:
   DOTNET_VERSION: '10.0.x'
-  VERSION: 1.0.${{ github.run_number }}
+  VERSION: 0.0.${{ github.run_number }}
   SERVER_PROJECT: src/SeriousGame.Server/SeriousGame.Server.csproj
   CLIENT_PROJECT: src/SeriousGame.Client/SeriousGame.Client.csproj
 

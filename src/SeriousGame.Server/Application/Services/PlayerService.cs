@@ -40,7 +40,11 @@ public class PlayerService
             _gameRepository.Remove(game);
         }
 
-        game?.Players.Remove(player);
+        var toRemove = game?.Players.FirstOrDefault(p => p.Id == player.Id);
+        if (toRemove is not null)
+        {
+            game.Players.Remove(toRemove);
+        }
 
         return game;
     }
@@ -78,6 +82,14 @@ public class PlayerService
 
     public Player CreatePlayer(string playerId, string playerName, string connectionId)
     {
+        var existing = _playerRepository.GetAll().FirstOrDefault(p => p.Id == playerId);
+        if (existing is not null)
+        {
+            existing.ConnectionId = connectionId;
+            existing.IsActive = true;
+            return existing;
+        }
+
         var player = new Player
         {
             Id = playerId,

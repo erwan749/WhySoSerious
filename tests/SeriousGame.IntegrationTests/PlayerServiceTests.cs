@@ -38,4 +38,16 @@ public class PlayerServiceTests
         Assert.False(removed);
         Assert.Single(playerRepository.GetAll());
     }
+    [Fact]
+    public void CreatePlayer_SameId_KeepsInstanceAndUpdatesConnectionId()
+    {
+        var service = BuildService(out var playerRepository);
+
+        var first = service.CreatePlayer(playerId: "client-1", playerName: "Bob", connectionId: "conn-A");
+        var second = service.CreatePlayer(playerId: "client-1", playerName: "Bob", connectionId: "conn-B");
+
+        Assert.Same(first, second);
+        Assert.Equal("conn-B", second.ConnectionId);
+        Assert.Single(playerRepository.GetAll());
+    }
 }

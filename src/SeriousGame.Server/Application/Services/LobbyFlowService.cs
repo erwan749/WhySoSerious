@@ -51,9 +51,9 @@ public class LobbyFlowService : ILobbyFlowService
         await _hub.Groups.AddToGroupAsync(connectionId, game.Id);
         await NotifyLobbyGamesUpdated();
 
-        return Mapper.ToDto(game);
+        return await CheckAndStartIfReady(game);
     }
-
+    
     public async Task<GameDto?> JoinGame(JoinGameCommand command, string connectionId)
     {
         var player = _playerService.GetPlayerById(command.PlayerId);
@@ -65,6 +65,11 @@ public class LobbyFlowService : ILobbyFlowService
         var game = _gameService.GetGame(command.GameId);
         if (game is null) return null;
 
+        return await CheckAndStartIfReady(game);
+    }
+    
+    private async Task<GameDto> CheckAndStartIfReady(Game game)
+    {
         if (game.Players.Count < game.MinimumPlayers)
         {
             var waitingDto = Mapper.ToDto(game);
