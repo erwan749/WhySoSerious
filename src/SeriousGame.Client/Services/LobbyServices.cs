@@ -53,11 +53,13 @@ public class LobbyServices : ILobbyServices
 
         _lobbyConnection.On<GameDto, List<string>>(nameof(ILobbyHubClient.WaitingForPlayers), (game, playerNames) =>
         {
+            _session.EnterGame(game);
             WaitingForPlayers?.Invoke(game, playerNames);
         });
 
         _lobbyConnection.On<GameDto>(nameof(ILobbyHubClient.GameStarting), game =>
         {
+            _session.EnterGame(game);
             GameStarting?.Invoke(game);
             _gameStartingSignal?.TrySetResult();
         });

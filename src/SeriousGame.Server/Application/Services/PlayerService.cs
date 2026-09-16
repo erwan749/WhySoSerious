@@ -78,6 +78,14 @@ public class PlayerService
 
     public Player CreatePlayer(string playerId, string playerName, string connectionId)
     {
+        var existing = _playerRepository.GetAll().FirstOrDefault(p => p.Id == playerId);
+        if (existing is not null)
+        {
+            existing.ConnectionId = connectionId;
+            existing.IsActive = true;
+            return existing;
+        }
+
         var player = new Player
         {
             Id = playerId,
