@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/">
+    <Project Path="src/SeriousGame.Client/SeriousGame.Client.csproj" />
+    <Project Path="src/SeriousGame.Server/SeriousGame.Server.csproj" />
+    <Project Path="src/SeriousGame.Shared/SeriousGame.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SeriousGame.AcceptanceTests/SeriousGame.AcceptanceTests.csproj" />
+    <Project Path="tests/SeriousGame.IntegrationTests/SeriousGame.IntegrationTests.csproj" />
+    <Project Path="tests/SeriousGame.UnitTests/SeriousGame.UnitTests.csproj" />
+  </Folder>
+</Solution>

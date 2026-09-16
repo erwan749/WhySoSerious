@@ -1,0 +1,84 @@
+name: Release (Server MSI + Client EXE)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # permet aussi de lancer à la main depuis l'onglet Actions
+
+permissions:
+  contents: write           # nécessaire pour créer la release GitHub
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  VERSION: 1.0.${{ github.run_number }}
+  SERVER_PROJECT: src/SeriousGame.Server/SeriousGame.Server.csproj
+  CLIENT_PROJECT: src/SeriousGame.Client/SeriousGame.Client.csproj
+
+jobs:
+  build:
+    runs-on: windows-latest   # WiX (MSI) ne tourne que sous Windows
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore
+        run: dotnet restore SeriousGame.slnx
+
+      - name: Tests
+        run: dotnet test SeriousGame.slnx -c Release --no-restore
+
+      # ---------- SERVER ----------
+      - name: Publish Server
+        run: >
+          dotnet publish ${{ env.SERVER_PROJECT }}
+          -c Release -r win-x64 --self-contained true
+          -p:Version=${{ env.VERSION }}
+          -o artifacts/server
+
+      - name: Installer WiX
+        run: dotnet tool install --global wix --version 5.0.2
+
+      - name: Build Server MSI
+        run: >
+          wix build installer/Server/Product.wxs
+          -arch x64
+          -d Version=${{ env.VERSION }}
+          -d PublishDir=${{ github.workspace }}\artifacts\server
+          -o dist/SeriousGame.Server-${{ env.VERSION }}.msi
+
+      # ---------- CLIENT ----------
+      - name: Publish Client (exe unique)
+        run: >
+          dotnet publish ${{ env.CLIENT_PROJECT }}
+          -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:Version=${{ env.VERSION }}
+          -o artifacts/client
+
+      - name: Package Client
+        shell: pwsh
+        run: |
+          Copy-Item artifacts/client/SeriousGame.Client.exe "dist/SeriousGame.Client-${env:VERSION}.exe"
+          Compress-Archive -Path artifacts/client/* -DestinationPath "dist/SeriousGame.Client-${env:VERSION}-win-x64.zip"
+
+      # ---------- PUBLICATION ----------
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: WhySoSerious-${{ env.VERSION }}
+          path: dist/*
+
+      - name: GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: WhySoSerious v${{ env.VERSION }}
+          generate_release_notes: true
+          files: dist/*

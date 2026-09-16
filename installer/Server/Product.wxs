@@ -1,0 +1,42 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+  <!-- UpgradeCode : NE JAMAIS LE CHANGER, c'est lui qui permet les mises à jour -->
+  <Package Name="SeriousGame Server"
+           Manufacturer="WhySoSerious"
+           Version="$(Version)"
+           UpgradeCode="6F3B2C1E-8A4D-4E7B-9C21-5D8E0F7A3B64">
+
+    <MajorUpgrade DowngradeErrorMessage="Une version plus récente de SeriousGame Server est déjà installée." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <StandardDirectory Id="ProgramFiles6432Folder">
+      <Directory Id="INSTALLFOLDER" Name="SeriousGame Server" />
+    </StandardDirectory>
+
+    <Feature Id="Main">
+
+      <!-- L'exe du serveur, installé comme service Windows -->
+      <Component Directory="INSTALLFOLDER">
+        <File Source="$(PublishDir)\SeriousGame.Server.exe" KeyPath="yes" />
+        <ServiceInstall Name="SeriousGameServer"
+                        DisplayName="SeriousGame Server"
+                        Description="Serveur SignalR du jeu WhySoSerious"
+                        Type="ownProcess"
+                        Start="auto"
+                        ErrorControl="normal" />
+        <ServiceControl Id="SeriousGameServerControl"
+                        Name="SeriousGameServer"
+                        Start="install"
+                        Stop="both"
+                        Remove="uninstall"
+                        Wait="yes" />
+      </Component>
+
+      <!-- Tout le reste du dossier publié -->
+      <Files Directory="INSTALLFOLDER" Include="$(PublishDir)\**">
+        <Exclude Files="$(PublishDir)\SeriousGame.Server.exe" />
+      </Files>
+
+    </Feature>
+  </Package>
+</Wix>
