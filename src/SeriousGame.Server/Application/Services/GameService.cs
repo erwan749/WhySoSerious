@@ -41,14 +41,14 @@ public class GameService
         return true;
     }
 
-    public bool DisconnectPlayer(string gameId, Player player)
-    {
-        var game = _gameRepository.GetAll().FirstOrDefault(r => r.Id == gameId);
-        if (game == null) return false;
-        game.Players.Remove(player);
-        _gameRepository.Remove(game);
-        return true;
-    }
+    //public bool DisconnectPlayer(string gameId, Player player)
+    //{
+    //    var game = _gameRepository.GetAll().FirstOrDefault(r => r.Id == gameId);
+    //    if (game == null) return false;
+    //    game.Players.Remove(player);
+    //    _gameRepository.Remove(game);
+    //    return true;
+    //}
 
     public bool StartGame(string gameId)
     {
