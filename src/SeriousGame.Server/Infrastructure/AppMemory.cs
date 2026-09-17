@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using Server.Domain;
+using Server.Domain.Enums;
 
 namespace Server.Infrastructure;
 
@@ -12,7 +13,6 @@ public class AppMemory
 {
     public ConcurrentDictionary<string, Player> Players { get; } = new();
     public ConcurrentDictionary<string, Game> Games { get; } = new();
-    // public ConcurrentDictionary<string, object> GameLocks { get; } = new(); --> à voir pour fix le MaximumPlayers avec un lock par partie
 
     // Référentiel de compétences (donnée de seed, en lecture seule).
     public IReadOnlyList<Skill> Skills { get; } =
@@ -38,4 +38,48 @@ public class AppMemory
         new Skill { Id = 19, Name = "GraphQL" },
         new Skill { Id = 20, Name = "REST APIs" }
     ];
+
+    // Un exemple de chaque type de donnée de seed, pour valider le format retenu (US03).
+    // Tender/Training sont immuables et réutilisables tels quels entre parties (comme Skill).
+    // ConsultantSeed est un blueprint, jamais un Consultant réel (voir ConsultantSeed.cs).
+    // Le catalogue complet suivra en US10 (Piste B) et les consultants de départ en US05 (Piste A).
+    public IReadOnlyList<Tender> TendersSeed { get; }
+    public IReadOnlyList<Training> TrainingsSeed { get; }
+    public IReadOnlyList<ConsultantSeed> ConsultantsSeed { get; }
+
+    public AppMemory()
+    {
+        TendersSeed =
+        [
+            new Tender
+            {
+                Name = "Refonte du site vitrine",
+                Budget = 15_000,
+                RoundsNumber = 2,
+                RequiredSkills = { new RequiredSkill { Skill = Skills[2], Level = Level.Intermediate } } // JavaScript
+            }
+        ];
+
+        TrainingsSeed =
+        [
+            new Training
+            {
+                Name = "Initiation à React",
+                Skill = Skills[4], // React
+                Cost = 800,
+                RoundsNumber = 1
+            }
+        ];
+
+        ConsultantsSeed =
+        [
+            new ConsultantSeed
+            {
+                Firstname = "Ada",
+                Lastname = "Lovelace",
+                SalaryRequirement = 4_000,
+                Skills = [ new ConsultantSkill { Skill = Skills[2] } ] // JavaScript, niveau Zero par défaut
+            }
+        ];
+    }
 }
