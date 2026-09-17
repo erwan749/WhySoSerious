@@ -1,14 +1,18 @@
-﻿using Shared.Models.Dtos;
-using Shared.Models.Requests;
+﻿using Shared.Models.Requests;
 
 namespace Shared.Abstractions;
+
+/// <summary>
+/// actions que le client peut 
+/// appeler pendant une partie
+/// </summary>
 
 public interface IGameHubServer
 {
 
-    Task JoinGameRound(string gameId , string playerId);
+    Task JoinGameRoom(string gameId , string playerId);
     Task ApplyToTender(ApplyToTenderCommand applyToTenderCommand);
-    Task EnrollInTraning(EnrollInTrainingCommand enrollInTrainingCommand);
-    Task SubmitDecisionsCommand(SubmitDecisionsCommand submitDecisionsCommand);
+    Task EnrollInTraining(EnrollInTrainingCommand enrollInTrainingCommand);
+    Task SubmitDecisions(SubmitDecisionsCommand submitDecisionsCommand);
 
 }

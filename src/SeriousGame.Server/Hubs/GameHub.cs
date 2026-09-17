@@ -1,39 +1,40 @@
 using Microsoft.AspNetCore.SignalR;
-using Server.Domain;
-using Server.Application.Services;
+using Shared.Abstractions;
+using Server.Application.Abstractions;
+using Shared.Models.Requests;
 
 namespace Server.Hubs;
 
-public class GameHub : Hub
+/// <summary>
+/// adaptateur SignalR fin, délègue à IGameFlowService.
+/// </summary>
+
+public sealed class GameHub : Hub<IGameHubClient>, IGameHubServer
 {
-    private readonly GameService _gameService;
-    private readonly PlayerService _playerService;
+    private readonly IGameFlowService _gameFlowService;
 
-    public GameHub(GameService gameService, PlayerService playerService)
+    public GameHub(IGameFlowService gameFlowService)
     {
-        _gameService = gameService;
-        _playerService = playerService;
+        _gameFlowService = gameFlowService;
     }
 
-    // Rejoindre une salle ; on ajoute le client au groupe SignalR correspondant
-    public async Task<bool> JoinGame(string gameId, Player player)
+    public Task JoinGameRoom(string gameId, string playerId)
     {
-        var joined = _gameService.JoinGame(gameId, player);
-        if (!joined) return false;
-
-        await Groups.AddToGroupAsync(Context.ConnectionId, gameId);
-
-        // Notifier les membres du groupe que le joueur a rejoint
-        await Clients.Group(gameId).SendAsync("PlayerJoined", player.Nickname);
-
-        // Mettre aussi à jour le lobby (liste des games) pour tous
-        await Clients.All.SendAsync("ReceiveGames", _gameService.GetGamesNotStarted());
-        return true;
+        return _gameFlowService.JoinGameRoom(gameId, playerId, Context.ConnectionId);
     }
 
-    // Exemple : envoi de message de chat à la salle
-    public async Task SendMessageToPlayerInDaGame(string gameId, string fromNickname, string message)
+    public  Task ApplyToTender(ApplyToTenderCommand applyToTenderCommand)
     {
-        await Clients.Group(gameId).SendAsync("ReceiveMessage", fromNickname, message);
+        return _gameFlowService.ApplyToTender(applyToTenderCommand);
+    }
+
+    public  Task EnrollInTraining(EnrollInTrainingCommand enrollInTrainingCommand)
+    {
+        return _gameFlowService.EnrollInTraining(enrollInTrainingCommand);
+    }
+
+    public  Task SubmitDecisions(SubmitDecisionsCommand submitDecisionsCommand)
+    {
+        return _gameFlowService.SubmitDecisions(submitDecisionsCommand);
     }
 }
