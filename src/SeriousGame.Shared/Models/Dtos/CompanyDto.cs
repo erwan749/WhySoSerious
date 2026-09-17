@@ -6,4 +6,5 @@ public class CompanyDto
     public required string Name { get; init; }
     public required string OwnerId { get; init; }
     public int Treasury { get; init; }
+    public ICollection<ConsultantDto> Staff { get; init; } = [];
 }
