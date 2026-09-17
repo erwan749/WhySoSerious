@@ -6,8 +6,14 @@ public class Company : BaseModel
 {
     public required string Name { get; set; }
     public required Player PlayerOwner { get; set; }
-    public int Treasury { get; private set; } = 1000000;
+    public int Treasury { get; private set; }
     public ICollection<Consultant> Staff { get; } = [];
+
+    /// <summary>Trésorerie de départ, fixée une seule fois à la création de l'entreprise.</summary>
+    public required int InitialTreasury
+    {
+        init => Treasury = value;
+    }
 
     // État persistant entre tours : appels d'offres en cours d'exécution et consultants en formation.
     // Un consultant est « occupé » s'il figure dans un Contract actif ou un TrainingEnrollment en cours.
