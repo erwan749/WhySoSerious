@@ -1,9 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Shared.Models.Dtos;
+using Shared.Models.Requests;
 
 namespace Shared.Abstractions;
 
-internal interface IGameHubServer
+public interface IGameHubServer
 {
+
+    Task JoinGameRound(string gameId , string playerId);
+    Task ApplyToTender(ApplyToTenderCommand applyToTenderCommand);
+    Task EnrollInTraning(EnrollInTrainingCommand enrollInTrainingCommand);
+    Task SubmitDecisionsCommand(SubmitDecisionsCommand submitDecisionsCommand);
+
 }

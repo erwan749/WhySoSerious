@@ -1,9 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿using Shared.Models.Dtos;
 namespace Shared.Abstractions;
 
-internal interface IGameHubClient
+/// <summary>
+/// événement que le serveur envoie
+/// pendant une partie
+/// </summary>
+
+public interface IGameHubClient
 {
+    Task RoundStarted(RoundDto roundDto);
+    Task PlayerSubmitted(string nickName);
+    Task RoundResolved(RoundResultDto roundResultDto);
+    Task GameEnded(RankingDto rankingDto);
 }
