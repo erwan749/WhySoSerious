@@ -1,4 +1,5 @@
 using Server.Domain;
+using Server.Domain.Enums;
 using Shared.Models.Dtos;
 
 namespace Server.Application;
@@ -45,21 +46,33 @@ public static class Mapper
         Name = company.Name,
         OwnerId = company.PlayerOwner.Id,
         Treasury = company.Treasury,
+        Revenue = company.Revenue,
         Staff = company.Staff.Select(ToDto).ToList()
+    };
+
+    public static RequiredSkillDto ToDto(RequiredSkill requiredSkill) => new()
+    {
+        Skill = ToDto(requiredSkill.Skill),
+        Level = ToDto(requiredSkill.Level)
     };
 
     public static TenderDto ToDto(Tender tender) => new()
     {
         Id = tender.Id,
         Name = tender.Name,
-        // TODO US03 : remplacer par tender.RequiredSkills une fois RequiredSkill créé.
-        RequiredSkills = tender.Skills.Select(s => new RequiredSkillDto
-        {
-            Skill = ToDto(s),
-            Level = SkillLevel.Zero
-        }).ToList(),
+        RequiredSkills = tender.RequiredSkills.Select(ToDto).ToList(),
         Budget = tender.Budget,
         RoundsNumber = tender.RoundsNumber
+    };
+
+    private static SkillLevel ToDto(Level level) => level switch
+    {
+        Level.Zero => SkillLevel.Zero,
+        Level.Basic => SkillLevel.Basic,
+        Level.Intermediate => SkillLevel.Intermediate,
+        Level.Advanced => SkillLevel.Advanced,
+        Level.Expert => SkillLevel.Expert,
+        _ => throw new ArgumentOutOfRangeException(nameof(level))
     };
 
     public static TrainingDto ToDto(Training training) => new()
