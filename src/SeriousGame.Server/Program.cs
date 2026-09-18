@@ -19,6 +19,7 @@ builder.Services.AddSingleton<IPlayerRepository, InMemoryPlayerRepository>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<PlayerService>();
 builder.Services.AddScoped<ILobbyFlowService, LobbyFlowService>();
+builder.Services.AddScoped<IGameFlowService, GameFlowService>();
 
 WebApplication app = builder.Build();
 
