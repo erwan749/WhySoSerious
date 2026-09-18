@@ -14,4 +14,6 @@ public class Game : BaseModel
     public ICollection<Company> Companies { get; } = [];
 
     public ICollection<Round> Rounds { get; } = [];
+    //Ids des joueurs connectés au hub /game, sert à lancer le 1er tour quand tout le monde est là
+    public HashSet<string> PlayersInGameRoom { get; } = [];
 }

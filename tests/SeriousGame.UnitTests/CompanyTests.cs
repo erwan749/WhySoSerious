@@ -7,7 +7,8 @@ public class CompanyTests
     private static Company MakeCompany() => new()
     {
         Name = "Test Co",
-        PlayerOwner = new Player { Id = "p1", Nickname = "Owner", ConnectionId = "c1" }
+        PlayerOwner = new Player { Id = "p1", Nickname = "Owner", ConnectionId = "c1" },
+        InitialTreasury = 1000
     };
 
     [Fact]

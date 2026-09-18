@@ -17,15 +17,18 @@ public class LobbyFlowService : ILobbyFlowService
     private readonly GameService _gameService;
     private readonly PlayerService _playerService;
     private readonly IHubContext<LobbyHub, ILobbyHubClient> _hub;
+    private readonly IGameFlowService _gameFlowService;
 
     public LobbyFlowService(
         GameService gameService,
         PlayerService playerService,
-        IHubContext<LobbyHub, ILobbyHubClient> hubContext)
+        IHubContext<LobbyHub, ILobbyHubClient> hubContext,
+        IGameFlowService gameFlowService)
     {
         _gameService = gameService;
         _playerService = playerService;
         _hub = hubContext;
+        _gameFlowService = gameFlowService;
     }
 
     public Task IdentifyNewPlayer(CreatePlayerCommand command, string connectionId)
@@ -84,6 +87,7 @@ public class LobbyFlowService : ILobbyFlowService
 
         await NotifyLobbyGamesUpdated();
         await _hub.Clients.Group(game.Id).GameStarting(startingDto);
+        await _gameFlowService.StartGame(game);
 
         return startingDto;
     }

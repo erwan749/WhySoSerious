@@ -8,7 +8,12 @@ public class ConsultantTests
     {
         Firstname = "Ada",
         Lastname = "Lovelace",
-        Company = new Company { Name = "Test Co", PlayerOwner = new Player { Id = "p1", Nickname = "Owner", ConnectionId = "c1" } }
+        Company = new Company
+        {
+            Name = "Test Co",
+            PlayerOwner = new Player { Id = "p1", Nickname = "Owner", ConnectionId = "c1" },
+            InitialTreasury = 1000
+        }
     };
 
     [Fact]

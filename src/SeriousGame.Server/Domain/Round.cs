@@ -14,4 +14,6 @@ public class Round :  BaseModel
 
     // Décisions des entreprises ce tour, résolues en Won/Lost au calcul de tour.
     public ICollection<TenderApplication> Applications { get; init; } = [];
+    //Ids des joueurs du round, US09
+    public HashSet<string> SubmittedPlayerIds { get; } = [];
 }

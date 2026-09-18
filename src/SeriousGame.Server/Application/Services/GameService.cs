@@ -60,4 +60,6 @@ public class GameService
     }
 
     public Game? GetGame(string gameId) => _gameRepository.GetAll().FirstOrDefault(r => r.Id == gameId);
+    public Game? GetGameByRoundId(string roundId) =>
+        _gameRepository.GetAll().FirstOrDefault(g => g.Rounds.Any(r => r.Id == roundId));
 }

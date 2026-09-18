@@ -1,42 +1,116 @@
-using Client.Resources;
+﻿using Client.Resources;
+using Client.Services.Interfaces;
 using Client.State;
 using Client.UI;
+using Shared.Models.Dtos;
 
 namespace Client.Game;
 
 /// <summary>
-/// Squelette de la boucle de partie côté client : parcourt les tours de la partie en cours et,
-/// pour chacun, les phases de TurnPhase avec un écran placeholder - aucune donnée de marché
-/// réelle, aucune décision collectée, aucun appel serveur. Instanciée par App pour la durée
-/// d'une seule partie, comme ConsoleAnimator, pas résolue depuis le conteneur DI.
+/// Boucle de partie côté client : ne pilote plus rien elle-même, elle se connecte au hub /game,
+/// rejoint la salle de la partie puis réagit aux événements du serveur (RoundStarted,
+/// PlayerSubmitted, RoundResolved, GameEnded). Instanciée par App pour la durée d'une seule
+/// partie, comme ConsoleAnimator, pas résolue depuis le conteneur DI.
 /// </summary>
 public class GameLoop
 {
-    private static readonly TurnPhase[] Phases = Enum.GetValues<TurnPhase>();
-
     private readonly ClientSession _session;
+    private readonly IGameServices _gameServices;
 
-    public GameLoop(ClientSession session)
+    // Complété par le handler GameEnded : c'est ce qui fait sortir RunAsync.
+    private readonly TaskCompletionSource _gameEndedSignal =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    public GameLoop(ClientSession session, IGameServices gameServices)
     {
         _session = session;
+        _gameServices = gameServices;
     }
 
-    public Task RunAsync()
+    public async Task RunAsync()
     {
-        var roundsNumber = _session.CurrentGame!.RoundsNumber;
+        var game = _session.CurrentGame;
+        if (game is null) return;
 
-        for (var round = 1; round <= roundsNumber; round++)
+        SubscribeToGameEvents();
+
+        try
         {
-            ConsoleUI.WriteHeader(string.Format(ClientResources.RoundHeaderFormat, round, roundsNumber));
+            var isConnected = await _gameServices.ConnectAsync();
 
-            foreach (var phase in Phases)
-                RenderPhase(phase);
+            if (!isConnected)
+            {
+                ConsoleUI.WriteError(string.Format(ClientResources.FailedToConnectError, _gameServices.HubUrl));
+                return;
+            }
+
+            // Le serveur n'ouvre le tour 1 que lorsque tous les joueurs ont rejoint la salle.
+            await _gameServices.JoinGameRoomAsync(game.Id);
+
+            await _gameEndedSignal.Task;
         }
+        finally
+        {
+            UnsubscribeFromGameEvents();
+            await _gameServices.DisconnectAsync();
+        }
+    }
 
+    private void SubscribeToGameEvents()
+    {
+        _gameServices.RoundStarted += OnRoundStarted;
+        _gameServices.PlayerSubmitted += OnPlayerSubmitted;
+        _gameServices.RoundResolved += OnRoundResolved;
+        _gameServices.GameEnded += OnGameEnded;
+    }
+
+    private void UnsubscribeFromGameEvents()
+    {
+        _gameServices.RoundStarted -= OnRoundStarted;
+        _gameServices.PlayerSubmitted -= OnPlayerSubmitted;
+        _gameServices.RoundResolved -= OnRoundResolved;
+        _gameServices.GameEnded -= OnGameEnded;
+    }
+
+    private void OnRoundStarted(RoundDto round)
+    {
+        // Les handlers tournent sur un thread SignalR : le rendu attend une saisie clavier,
+        // donc il part sur une tâche à part pour ne pas bloquer la réception des messages suivants.
+        _ = Task.Run(() => PlayRoundAsync(round));
+    }
+
+    private async Task PlayRoundAsync(RoundDto round)
+    {
+        ConsoleUI.WriteHeader(string.Format(ClientResources.RoundHeaderFormat, round.Order, round.TotalRounds));
+
+        // TODO US12 / US07-US09 : écrans réels du marché et collecte des décisions.
+        RenderPhase(TurnPhase.MarketAnalysis);
+        RenderPhase(TurnPhase.Decision);
+
+        ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Submission));
+        await _gameServices.SubmitDecisionsAsync();
+
+        ConsoleUI.WriteInfo(ClientResources.WaitingForOtherPlayersMessage);
+    }
+
+    private static void OnPlayerSubmitted(string nickname)
+    {
+        ConsoleUI.WriteInfo(string.Format(ClientResources.PlayerSubmittedFormat, nickname));
+    }
+
+    private static void OnRoundResolved(RoundResultDto result)
+    {
+        // TODO US16 : bilan réel du tour (contrats gagnés/perdus, trésorerie, classement).
+        ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Resolution));
+    }
+
+    private void OnGameEnded(RankingDto ranking)
+    {
+        // TODO US17 : affichage du classement final.
         ConsoleUI.WriteHeader(ClientResources.GameOverHeader);
         ConsoleUI.WriteInfo(ClientResources.GameOverMessage);
 
-        return Task.CompletedTask;
+        _gameEndedSignal.TrySetResult();
     }
 
     private static void RenderPhase(TurnPhase phase)
