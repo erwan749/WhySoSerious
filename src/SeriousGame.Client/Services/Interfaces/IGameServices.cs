@@ -1,4 +1,4 @@
-using Shared.Models.Dtos;
+﻿using Shared.Models.Dtos;
 using System.Diagnostics.Tracing;
 
 namespace Client.Services.Interfaces;
@@ -12,6 +12,8 @@ public interface IGameServices
     event Action<string>? PlayerSubmitted;
     event Action<RoundResultDto>? RoundResolved;
     event Action<RankingDto>? GameEnded;
+
+    string HubUrl { get; }
 
     Task<bool> ConnectAsync();
     Task JoinGameRoomAsync(string gameId);

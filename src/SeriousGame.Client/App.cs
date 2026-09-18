@@ -1,4 +1,4 @@
-using Client.Game;
+﻿using Client.Game;
 using Client.Resources;
 using Client.Services;
 using Client.Services.Interfaces;
@@ -20,6 +20,7 @@ public class App
 
     private readonly ILogger<App> _logger;
     private readonly ILobbyServices _lobbyServices;
+    private readonly IGameServices _gameServices;
     private readonly ClientSession _session;
     private readonly ConsoleAnimator _waitingAnim;
 
@@ -27,10 +28,11 @@ public class App
     // que pendant la phase d'attente, pas écraser le menu pendant la navigation.
     private bool _isWaitingForGameStart;
 
-    public App(ILogger<App> logger, ILobbyServices lobbyServices, ClientSession session)
+    public App(ILogger<App> logger, ILobbyServices lobbyServices, IGameServices gameServices, ClientSession session)
     {
         _logger = logger;
         _lobbyServices = lobbyServices;
+        _gameServices = gameServices;
         _session = session;
         _waitingAnim = new ConsoleAnimator(ClientResources.WaitingAnimationLabel, Bounce, 200);
 
@@ -201,11 +203,11 @@ public class App
                 }
                 else
                 {
-                    await new GameLoop(_session).RunAsync();
+                    await new GameLoop(_session, _gameServices).RunAsync();
                 }
                 break;
             case EnrollmentResult.GameStarting:
-                await new GameLoop(_session).RunAsync();
+                await new GameLoop(_session, _gameServices).RunAsync();
                 break;
         }
     }

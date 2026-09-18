@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <root>
     <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
@@ -170,5 +170,11 @@ Games available:
     </data>
     <data name="GameOverMessage" xml:space="preserve">
         <value>Thanks for playing! (final scoring not implemented yet)</value>
+    </data>
+    <data name="PlayerSubmittedFormat" xml:space="preserve">
+        <value>📨 {0} submitted their decisions.</value>
+    </data>
+    <data name="WaitingForOtherPlayersMessage" xml:space="preserve">
+        <value>⌛ Waiting for the other players...</value>
     </data>
 </root>
