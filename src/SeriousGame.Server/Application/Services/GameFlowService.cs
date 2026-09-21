@@ -87,6 +87,7 @@ public class GameFlowService : IGameFlowService
 
         if (firstRound is not null)
         {
+            await _hubContext.Clients.Group(game.Id).GameStarted(game.Companies.Select(Mapper.ToDto).ToList());
             await StartRound(game, firstRound);
         }
     }

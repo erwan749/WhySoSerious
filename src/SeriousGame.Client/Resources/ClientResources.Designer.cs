@@ -9,21 +9,21 @@
 
 namespace Client.Resources {
     using System;
-
-
+    
+    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ClientResources {
-
+        
         private static System.Resources.ResourceManager resourceMan;
-
+        
         private static System.Globalization.CultureInfo resourceCulture;
-
+        
         [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal ClientResources() {
         }
-
+        
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static System.Resources.ResourceManager ResourceManager {
             get {
@@ -34,7 +34,7 @@ namespace Client.Resources {
                 return resourceMan;
             }
         }
-
+        
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static System.Globalization.CultureInfo Culture {
             get {
@@ -44,304 +44,310 @@ namespace Client.Resources {
                 resourceCulture = value;
             }
         }
-
+        
         internal static string GameName {
             get {
                 return ResourceManager.GetString("GameName", resourceCulture);
             }
         }
-
+        
         internal static string WindowTitle {
             get {
                 return ResourceManager.GetString("WindowTitle", resourceCulture);
             }
         }
-
+        
         internal static string GoodbyeMessage {
             get {
                 return ResourceManager.GetString("GoodbyeMessage", resourceCulture);
             }
         }
-
+        
         internal static string ChooseLoginPrompt {
             get {
                 return ResourceManager.GetString("ChooseLoginPrompt", resourceCulture);
             }
         }
-
+        
         internal static string MainMenuHeader {
             get {
                 return ResourceManager.GetString("MainMenuHeader", resourceCulture);
             }
         }
-
+        
         internal static string MenuOptionCreateGame {
             get {
                 return ResourceManager.GetString("MenuOptionCreateGame", resourceCulture);
             }
         }
-
+        
         internal static string MenuOptionJoinGame {
             get {
                 return ResourceManager.GetString("MenuOptionJoinGame", resourceCulture);
             }
         }
-
+        
         internal static string MenuOptionQuit {
             get {
                 return ResourceManager.GetString("MenuOptionQuit", resourceCulture);
             }
         }
-
+        
         internal static string YourChoicePrompt {
             get {
                 return ResourceManager.GetString("YourChoicePrompt", resourceCulture);
             }
         }
-
+        
         internal static string InvalidChoiceError {
             get {
                 return ResourceManager.GetString("InvalidChoiceError", resourceCulture);
             }
         }
-
+        
         internal static string WaitingForGameHeader {
             get {
                 return ResourceManager.GetString("WaitingForGameHeader", resourceCulture);
             }
         }
-
+        
         internal static string PlayersWaitingPrompt {
             get {
                 return ResourceManager.GetString("PlayersWaitingPrompt", resourceCulture);
             }
         }
-
+        
         internal static string GameStartingMessage {
             get {
                 return ResourceManager.GetString("GameStartingMessage", resourceCulture);
             }
         }
-
+        
         internal static string ServerMessagePrefix {
             get {
                 return ResourceManager.GetString("ServerMessagePrefix", resourceCulture);
             }
         }
-
+        
         internal static string ReconnectingWarning {
             get {
                 return ResourceManager.GetString("ReconnectingWarning", resourceCulture);
             }
         }
-
+        
         internal static string ReconnectedMessage {
             get {
                 return ResourceManager.GetString("ReconnectedMessage", resourceCulture);
             }
         }
-
+        
         internal static string ConnectedToHubMessage {
             get {
                 return ResourceManager.GetString("ConnectedToHubMessage", resourceCulture);
             }
         }
-
+        
         internal static string FailedToConnectError {
             get {
                 return ResourceManager.GetString("FailedToConnectError", resourceCulture);
             }
         }
-
+        
         internal static string ChooseGameNamePrompt {
             get {
                 return ResourceManager.GetString("ChooseGameNamePrompt", resourceCulture);
             }
         }
-
+        
         internal static string GameCreatedMessage {
             get {
                 return ResourceManager.GetString("GameCreatedMessage", resourceCulture);
             }
         }
-
+        
         internal static string NoGamesAvailableMessage {
             get {
                 return ResourceManager.GetString("NoGamesAvailableMessage", resourceCulture);
             }
         }
-
+        
         internal static string GamesAvailableHeader {
             get {
                 return ResourceManager.GetString("GamesAvailableHeader", resourceCulture);
             }
         }
-
+        
         internal static string GameListItemFormat {
             get {
                 return ResourceManager.GetString("GameListItemFormat", resourceCulture);
             }
         }
-
+        
         internal static string ReturnToMainMenuFormat {
             get {
                 return ResourceManager.GetString("ReturnToMainMenuFormat", resourceCulture);
             }
         }
-
+        
         internal static string EnterGameNumberPrompt {
             get {
                 return ResourceManager.GetString("EnterGameNumberPrompt", resourceCulture);
             }
         }
-
+        
         internal static string CannotJoinGameError {
             get {
                 return ResourceManager.GetString("CannotJoinGameError", resourceCulture);
             }
         }
-
+        
         internal static string JoinedGameMessage {
             get {
                 return ResourceManager.GetString("JoinedGameMessage", resourceCulture);
             }
         }
-
+        
         internal static string InvalidChoiceMessage {
             get {
                 return ResourceManager.GetString("InvalidChoiceMessage", resourceCulture);
             }
         }
-
+        
         internal static string CreateCompanyHeader {
             get {
                 return ResourceManager.GetString("CreateCompanyHeader", resourceCulture);
             }
         }
-
+        
         internal static string CompanyNamePrompt {
             get {
                 return ResourceManager.GetString("CompanyNamePrompt", resourceCulture);
             }
         }
-
+        
         internal static string CannotInvokeError {
             get {
                 return ResourceManager.GetString("CannotInvokeError", resourceCulture);
             }
         }
-
+        
         internal static string HubExceptionError {
             get {
                 return ResourceManager.GetString("HubExceptionError", resourceCulture);
             }
         }
-
+        
         internal static string InvalidOperationError {
             get {
                 return ResourceManager.GetString("InvalidOperationError", resourceCulture);
             }
         }
-
+        
         internal static string UnexpectedError {
             get {
                 return ResourceManager.GetString("UnexpectedError", resourceCulture);
             }
         }
-
+        
         internal static string DisconnectedFromLobbyMessage {
             get {
                 return ResourceManager.GetString("DisconnectedFromLobbyMessage", resourceCulture);
             }
         }
-
+        
         internal static string NotLoggedInLabel {
             get {
                 return ResourceManager.GetString("NotLoggedInLabel", resourceCulture);
             }
         }
-
+        
         internal static string WaitingAnimationLabel {
             get {
                 return ResourceManager.GetString("WaitingAnimationLabel", resourceCulture);
             }
         }
-
+        
         internal static string CancelWaitingHint {
             get {
                 return ResourceManager.GetString("CancelWaitingHint", resourceCulture);
             }
         }
-
+        
         internal static string LeftGameMessageFormat {
             get {
                 return ResourceManager.GetString("LeftGameMessageFormat", resourceCulture);
             }
         }
-
+        
         internal static string RoundHeaderFormat {
             get {
                 return ResourceManager.GetString("RoundHeaderFormat", resourceCulture);
             }
         }
-
+        
         internal static string MarketAnalysisPlaceholder {
             get {
                 return ResourceManager.GetString("MarketAnalysisPlaceholder", resourceCulture);
             }
         }
-
+        
         internal static string SimulationPlaceholder {
             get {
                 return ResourceManager.GetString("SimulationPlaceholder", resourceCulture);
             }
         }
-
+        
         internal static string DecisionPlaceholder {
             get {
                 return ResourceManager.GetString("DecisionPlaceholder", resourceCulture);
             }
         }
-
+        
         internal static string SubmissionPlaceholder {
             get {
                 return ResourceManager.GetString("SubmissionPlaceholder", resourceCulture);
             }
         }
-
+        
         internal static string ResolutionPlaceholder {
             get {
                 return ResourceManager.GetString("ResolutionPlaceholder", resourceCulture);
             }
         }
-
+        
         internal static string PressEnterToContinuePrompt {
             get {
                 return ResourceManager.GetString("PressEnterToContinuePrompt", resourceCulture);
             }
         }
-
+        
         internal static string GameOverHeader {
             get {
                 return ResourceManager.GetString("GameOverHeader", resourceCulture);
             }
         }
-
+        
+        internal static string GameOverMessage {
+            get {
+                return ResourceManager.GetString("GameOverMessage", resourceCulture);
+            }
+        }
+        
         internal static string PlayerSubmittedFormat {
             get {
                 return ResourceManager.GetString("PlayerSubmittedFormat", resourceCulture);
             }
         }
-
+        
         internal static string WaitingForOtherPlayersMessage {
             get {
                 return ResourceManager.GetString("WaitingForOtherPlayersMessage", resourceCulture);
             }
         }
-
-        internal static string GameOverMessage {
+        
+        internal static string CompanyAssignedFormat {
             get {
-                return ResourceManager.GetString("GameOverMessage", resourceCulture);
+                return ResourceManager.GetString("CompanyAssignedFormat", resourceCulture);
             }
         }
     }
