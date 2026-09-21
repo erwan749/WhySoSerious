@@ -9,4 +9,5 @@ public class GameOptions
     public int MinimumPlayers { get; init; } = 3;
     public int MaximumPlayers { get; init; } = 8;
     public int RoundsNumber { get; init; } = 15;
+    public int CompanyInitialTreasury { get; init; } = 1_000_000;
 }

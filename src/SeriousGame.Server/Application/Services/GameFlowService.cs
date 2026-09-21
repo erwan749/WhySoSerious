@@ -6,6 +6,8 @@ using Server.Hubs;
 using Shared.Abstractions;
 using Shared.Models.Dtos;
 using Shared.Models.Requests;
+using Microsoft.Extensions.Options;
+using Server.Options;
 
 namespace Server.Application.Services;
 
@@ -15,13 +17,20 @@ public class GameFlowService : IGameFlowService
     private readonly PlayerService _playerService;
     private readonly IHubContext<GameHub, IGameHubClient> _hubContext;
     private readonly ILogger<GameFlowService> _logger;
+    private readonly GameOptions _gameOptions;
 
-    public GameFlowService(GameService gameService, PlayerService playerService, IHubContext<GameHub, IGameHubClient> hubContext, ILogger<GameFlowService> logger)
+    public GameFlowService(
+        GameService gameService,
+        PlayerService playerService,
+        IHubContext<GameHub, IGameHubClient> hubContext,
+        ILogger<GameFlowService> logger,
+        IOptions<GameOptions> gameOptions)
     {
         _gameService = gameService;
         _playerService = playerService;
         _hubContext = hubContext;
         _logger = logger;
+        _gameOptions = gameOptions.Value;
     }
 
     public Task ApplyToTender(ApplyToTenderCommand command)
@@ -84,6 +93,12 @@ public class GameFlowService : IGameFlowService
 
     public Task StartGame(Game game)
     {
+        foreach (var player in game.Players)
+        {
+            var company = CompanyFactory.Create(player, _gameOptions);
+            game.Companies.Add(company);
+        }
+
         return Task.CompletedTask;
     }
 
