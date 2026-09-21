@@ -177,4 +177,7 @@ Games available:
     <data name="WaitingForOtherPlayersMessage" xml:space="preserve">
         <value>⌛ Waiting for the other players...</value>
     </data>
+    <data name="CompanyAssignedFormat" xml:space="preserve">
+        <value>Your company : {0}</value>
+    </data>
 </root>

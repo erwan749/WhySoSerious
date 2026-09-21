@@ -50,14 +50,14 @@ public class GameService
     //    return true;
     //}
 
-    public bool StartGame(string gameId)
+    /*public bool StartGame(string gameId)
     {
         var game = _gameRepository.GetAll().FirstOrDefault(r => r.Id == gameId);
         if (game == null) return false;
         game.IsInProgress = true;
 
         return true;
-    }
+    }*/
 
     public Game? GetGame(string gameId) => _gameRepository.GetAll().FirstOrDefault(r => r.Id == gameId);
     public Game? GetGameByRoundId(string roundId) =>

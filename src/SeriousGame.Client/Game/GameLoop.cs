@@ -58,6 +58,7 @@ public class GameLoop
 
     private void SubscribeToGameEvents()
     {
+        _gameServices.GameStarted += OnGameStarted;
         _gameServices.RoundStarted += OnRoundStarted;
         _gameServices.PlayerSubmitted += OnPlayerSubmitted;
         _gameServices.RoundResolved += OnRoundResolved;
@@ -66,10 +67,16 @@ public class GameLoop
 
     private void UnsubscribeFromGameEvents()
     {
+        _gameServices.GameStarted -= OnGameStarted;
         _gameServices.RoundStarted -= OnRoundStarted;
         _gameServices.PlayerSubmitted -= OnPlayerSubmitted;
         _gameServices.RoundResolved -= OnRoundResolved;
         _gameServices.GameEnded -= OnGameEnded;
+    }
+    
+    private static void OnGameStarted(CompanyDto company)
+    {
+        ConsoleUI.WriteInfo(string.Format(ClientResources.CompanyAssignedFormat, company.Name));
     }
 
     private void OnRoundStarted(RoundDto round)

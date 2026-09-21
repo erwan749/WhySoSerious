@@ -36,6 +36,7 @@ public class GameServices : IGameServices
         RegisterHandlers();
     }
 
+    public event Action<CompanyDto>? GameStarted;
     public event Action<RoundDto>? RoundStarted;
     public event Action<string>? PlayerSubmitted;
     public event Action<RoundResultDto>? RoundResolved;
@@ -86,6 +87,12 @@ public class GameServices : IGameServices
         {
             _currentRoundId = round.Id;
             RoundStarted?.Invoke(round);
+        });
+        
+        _gameConnection.On<ICollection<CompanyDto>>(nameof(IGameHubClient.GameStarted), companies =>
+        {
+            var myCompany = companies.FirstOrDefault(c => c.OwnerId == _clientSession.PlayerId);
+            if (myCompany is not null) GameStarted?.Invoke(myCompany);
         });
 
         _gameConnection.On<string>(nameof(IGameHubClient.PlayerSubmitted), nickname =>
