@@ -74,8 +74,9 @@ public class GameLoop
         _gameServices.GameEnded -= OnGameEnded;
     }
     
-    private static void OnGameStarted(CompanyDto company)
+    private void OnGameStarted(CompanyDto company)
     {
+        _session.SetMyCompany(company);
         ConsoleUI.WriteInfo(string.Format(ClientResources.CompanyAssignedFormat, company.Name));
     }
 
@@ -92,6 +93,7 @@ public class GameLoop
 
         // TODO US12 / US07-US09 : écrans réels du marché et collecte des décisions.
         RenderPhase(TurnPhase.MarketAnalysis);
+        ShowMyCompanyScreen();
         RenderPhase(TurnPhase.Decision);
 
         ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Submission));
@@ -136,4 +138,34 @@ public class GameLoop
         TurnPhase.Resolution => ClientResources.ResolutionPlaceholder,
         _ => throw new ArgumentOutOfRangeException(nameof(phase))
     };
+    private void ShowMyCompanyScreen()
+    {
+        var company = _session.MyCompany;
+
+        if (company is null)
+        {
+            ConsoleUI.WriteError(ClientResources.NoCompanyError);
+            return;
+        }
+
+        ConsoleUI.WriteHeader(string.Format(ClientResources.MyCompanyHeaderFormat, company.Name));
+        ConsoleUI.WriteInfo(string.Format(ClientResources.TreasuryFormat, company.Treasury));
+        ConsoleUI.WriteInfo(string.Format(ClientResources.RevenueFormat, company.Revenue));
+
+        foreach (var consultant in company.Staff)
+        {
+            var statusLabel = consultant.Status switch
+            {
+                ConsultantStatus.Free => ClientResources.StatusFree,
+                ConsultantStatus.OnMission => ClientResources.StatusOnMission,
+                ConsultantStatus.InTraining => ClientResources.StatusInTraining,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, consultant.FullName, statusLabel));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);
+        Console.ReadLine();
+    }
 }

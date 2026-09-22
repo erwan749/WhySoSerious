@@ -42,8 +42,26 @@ public static class Mapper
         Id = consultant.Id,
         FullName = consultant.FullName,
         SalaryRequirement = consultant.SalaryRequirement,
-        Skills = consultant.Skills.Select(ToDto).ToList()
+        Skills = consultant.Skills.Select(ToDto).ToList(),
+        Status = ResolveStatus(consultant)
     };
+
+    private static ConsultantStatus ResolveStatus(Consultant consultant)
+    {
+        var company = consultant.Company;
+
+        if (company.Contracts.Any(c => c.Status == ContractStatus.Active && c.AssignedConsultants.Contains(consultant)))
+        {
+            return ConsultantStatus.OnMission;
+        }
+
+        if (company.TrainingEnrollments.Any(e => e.Status == EnrollmentStatus.InProgress && e.Consultant == consultant))
+        {
+            return ConsultantStatus.InTraining;
+        }
+
+        return ConsultantStatus.Free;
+    }
 
     public static CompanyDto ToDto(Company company) => new()
     {

@@ -180,4 +180,28 @@ Games available:
     <data name="CompanyAssignedFormat" xml:space="preserve">
         <value>Your company : {0}</value>
     </data>
+    <data name="MyCompanyHeaderFormat" xml:space="preserve">
+        <value>My Company : {0}</value>
+    </data>
+    <data name="TreasuryFormat" xml:space="preserve">
+        <value>Treasury : {0} €</value>
+    </data>
+    <data name="RevenueFormat" xml:space="preserve">
+        <value>Revenue : {0} €</value>
+    </data>
+    <data name="ConsultantLineFormat" xml:space="preserve">
+        <value>- {0} ({1})</value>
+    </data>
+    <data name="StatusFree" xml:space="preserve">
+        <value>Free</value>
+    </data>
+    <data name="StatusOnMission" xml:space="preserve">
+        <value>On Mission</value>
+    </data>
+    <data name="StatusInTraining" xml:space="preserve">
+        <value>InTraining</value>
+    </data>
+    <data name="NoCompanyError" xml:space="preserve">
+        <value>No Company found</value>
+    </data>
 </root>

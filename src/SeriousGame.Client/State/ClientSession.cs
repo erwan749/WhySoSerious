@@ -14,6 +14,7 @@ public class ClientSession
     public string? Nickname { get; private set; }
     public List<GameDto> Games { get; private set; } = [];
     public GameDto? CurrentGame { get; private set; }
+    public CompanyDto? MyCompany { get; private set; }
 
     public void Identify(string nickname)
     {
@@ -45,6 +46,7 @@ public class ClientSession
         return string.Concat(nickname.Select(c => invalidChars.Contains(c) ? '_' : c));
     }
 
+    public void SetMyCompany(CompanyDto company) => MyCompany = company;
     public void UpdateGames(List<GameDto> games) => Games = games;
 
     public void EnterGame(GameDto game) => CurrentGame = game;
