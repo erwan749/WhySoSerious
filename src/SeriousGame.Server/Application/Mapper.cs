@@ -31,37 +31,14 @@ public static class Mapper
         Name = skill.Name
     };
 
-    public static ConsultantSkillDto ToDto(ConsultantSkill consultantSkill) => new()
-    {
-        Skill = ToDto(consultantSkill.Skill),
-        Level = ToDto(consultantSkill.Level)
-    };
-
     public static ConsultantDto ToDto(Consultant consultant) => new()
     {
         Id = consultant.Id,
         FullName = consultant.FullName,
         SalaryRequirement = consultant.SalaryRequirement,
-        Skills = consultant.Skills.Select(ToDto).ToList(),
-        Status = ResolveStatus(consultant)
+        Skills = [], // TODO US05 : mapper consultant.Skills une fois ConsultantSkill en place
+        // IsBusy = false à faire seulement à parit de l'US06// TODO US06 : calculé depuis les Contracts / TrainingEnrollments actifs
     };
-
-    private static ConsultantStatus ResolveStatus(Consultant consultant)
-    {
-        var company = consultant.Company;
-
-        if (company.Contracts.Any(c => c.Status == ContractStatus.Active && c.AssignedConsultants.Contains(consultant)))
-        {
-            return ConsultantStatus.OnMission;
-        }
-
-        if (company.TrainingEnrollments.Any(e => e.Status == EnrollmentStatus.InProgress && e.Consultant == consultant))
-        {
-            return ConsultantStatus.InTraining;
-        }
-
-        return ConsultantStatus.Free;
-    }
 
     public static CompanyDto ToDto(Company company) => new()
     {

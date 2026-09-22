@@ -6,9 +6,6 @@ using Server.Hubs;
 using Shared.Abstractions;
 using Shared.Models.Dtos;
 using Shared.Models.Requests;
-using Microsoft.Extensions.Options;
-using Server.Infrastructure;
-using Server.Options;
 
 namespace Server.Application.Services;
 
@@ -18,23 +15,13 @@ public class GameFlowService : IGameFlowService
     private readonly PlayerService _playerService;
     private readonly IHubContext<GameHub, IGameHubClient> _hubContext;
     private readonly ILogger<GameFlowService> _logger;
-    private readonly GameOptions _gameOptions;
-    private readonly AppMemory _appMemory;
 
-    public GameFlowService(
-        GameService gameService,
-        PlayerService playerService,
-        IHubContext<GameHub, IGameHubClient> hubContext,
-        ILogger<GameFlowService> logger,
-        IOptions<GameOptions> gameOptions,
-        AppMemory appMemory)
+    public GameFlowService(GameService gameService, PlayerService playerService, IHubContext<GameHub, IGameHubClient> hubContext, ILogger<GameFlowService> logger)
     {
         _gameService = gameService;
         _playerService = playerService;
         _hubContext = hubContext;
         _logger = logger;
-        _gameOptions = gameOptions.Value;
-        _appMemory = appMemory;
     }
 
     public Task ApplyToTender(ApplyToTenderCommand command)
@@ -91,21 +78,12 @@ public class GameFlowService : IGameFlowService
 
         if (firstRound is not null)
         {
-            await _hubContext.Clients.Group(game.Id).GameStarted(game.Companies.Select(Mapper.ToDto).ToList());
             await StartRound(game, firstRound);
         }
     }
 
     public Task StartGame(Game game)
     {
-        foreach (var player in game.Players)
-        {
-            var company = CompanyFactory.Create(player, _gameOptions);
-            game.Companies.Add(company);
-        }
-
-        ConsultantFactory.AssignInitialStaff(game.Companies.ToList(), _appMemory.ConsultantsSeed, _appMemory.Skills, Random.Shared);
-
         return Task.CompletedTask;
     }
 

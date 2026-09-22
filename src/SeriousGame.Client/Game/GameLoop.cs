@@ -58,7 +58,6 @@ public class GameLoop
 
     private void SubscribeToGameEvents()
     {
-        _gameServices.GameStarted += OnGameStarted;
         _gameServices.RoundStarted += OnRoundStarted;
         _gameServices.PlayerSubmitted += OnPlayerSubmitted;
         _gameServices.RoundResolved += OnRoundResolved;
@@ -67,17 +66,10 @@ public class GameLoop
 
     private void UnsubscribeFromGameEvents()
     {
-        _gameServices.GameStarted -= OnGameStarted;
         _gameServices.RoundStarted -= OnRoundStarted;
         _gameServices.PlayerSubmitted -= OnPlayerSubmitted;
         _gameServices.RoundResolved -= OnRoundResolved;
         _gameServices.GameEnded -= OnGameEnded;
-    }
-    
-    private void OnGameStarted(CompanyDto company)
-    {
-        _session.SetMyCompany(company);
-        ConsoleUI.WriteInfo(string.Format(ClientResources.CompanyAssignedFormat, company.Name));
     }
 
     private void OnRoundStarted(RoundDto round)
@@ -93,7 +85,6 @@ public class GameLoop
 
         // TODO US12 / US07-US09 : écrans réels du marché et collecte des décisions.
         RenderPhase(TurnPhase.MarketAnalysis);
-        ShowMyCompanyScreen();
         RenderPhase(TurnPhase.Decision);
 
         ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Submission));
@@ -138,40 +129,4 @@ public class GameLoop
         TurnPhase.Resolution => ClientResources.ResolutionPlaceholder,
         _ => throw new ArgumentOutOfRangeException(nameof(phase))
     };
-    private void ShowMyCompanyScreen()
-    {
-        var company = _session.MyCompany;
-
-        if (company is null)
-        {
-            ConsoleUI.WriteError(ClientResources.NoCompanyError);
-            return;
-        }
-
-        ConsoleUI.WriteHeader(string.Format(ClientResources.MyCompanyHeaderFormat, company.Name));
-        ConsoleUI.WriteInfo(string.Format(ClientResources.TreasuryFormat, company.Treasury));
-        ConsoleUI.WriteInfo(string.Format(ClientResources.RevenueFormat, company.Revenue));
-
-        foreach (var consultant in company.Staff)
-        {
-            var statusLabel = consultant.Status switch
-            {
-                ConsultantStatus.Free => ClientResources.StatusFree,
-                ConsultantStatus.OnMission => ClientResources.StatusOnMission,
-                ConsultantStatus.InTraining => ClientResources.StatusInTraining,
-                _ => throw new ArgumentOutOfRangeException()
-            };
-
-            ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, consultant.FullName, statusLabel));
-
-            var skillsLabel = consultant.Skills.Count > 0
-                ? string.Join(", ", consultant.Skills.Select(s => s.Skill.Name))
-                : ClientResources.NoSkillsLabel;
-
-            ConsoleUI.WriteInfo($"   {string.Format(ClientResources.ConsultantSkillsFormat, skillsLabel)}");
-        }
-
-        ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);
-        Console.ReadLine();
-    }
 }

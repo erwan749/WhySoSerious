@@ -6,5 +6,5 @@ public class ConsultantDto
     public required string FullName { get; init; }
     public required int SalaryRequirement { get; init; }
     public ICollection<ConsultantSkillDto> Skills { get; init; } = [];
-    public required ConsultantStatus Status { get; init; }
+    public bool IsBusy { get; init; }
 }
