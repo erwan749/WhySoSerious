@@ -350,5 +350,65 @@ namespace Client.Resources {
                 return ResourceManager.GetString("CompanyAssignedFormat", resourceCulture);
             }
         }
+        
+        internal static string MyCompanyHeaderFormat {
+            get {
+                return ResourceManager.GetString("MyCompanyHeaderFormat", resourceCulture);
+            }
+        }
+        
+        internal static string TreasuryFormat {
+            get {
+                return ResourceManager.GetString("TreasuryFormat", resourceCulture);
+            }
+        }
+        
+        internal static string RevenueFormat {
+            get {
+                return ResourceManager.GetString("RevenueFormat", resourceCulture);
+            }
+        }
+        
+        internal static string ConsultantLineFormat {
+            get {
+                return ResourceManager.GetString("ConsultantLineFormat", resourceCulture);
+            }
+        }
+        
+        internal static string StatusFree {
+            get {
+                return ResourceManager.GetString("StatusFree", resourceCulture);
+            }
+        }
+        
+        internal static string StatusOnMission {
+            get {
+                return ResourceManager.GetString("StatusOnMission", resourceCulture);
+            }
+        }
+        
+        internal static string StatusInTraining {
+            get {
+                return ResourceManager.GetString("StatusInTraining", resourceCulture);
+            }
+        }
+        
+        internal static string NoCompanyError {
+            get {
+                return ResourceManager.GetString("NoCompanyError", resourceCulture);
+            }
+        }
+        
+        internal static string ConsultantSkillsFormat {
+            get {
+                return ResourceManager.GetString("ConsultantSkillsFormat", resourceCulture);
+            }
+        }
+        
+        internal static string NoSkillsLabel {
+            get {
+                return ResourceManager.GetString("NoSkillsLabel", resourceCulture);
+            }
+        }
     }
 }
