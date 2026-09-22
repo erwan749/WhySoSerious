@@ -18,6 +18,7 @@ public interface IGameServices
 
     Task<bool> ConnectAsync();
     Task JoinGameRoomAsync(string gameId);
+    Task<string?> ApplyToTenderAsync(string tenderId, ICollection<string> consultantIds);
     Task SubmitDecisionsAsync();
     Task DisconnectAsync();
 

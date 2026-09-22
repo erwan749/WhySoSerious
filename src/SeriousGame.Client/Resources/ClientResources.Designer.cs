@@ -410,5 +410,59 @@ namespace Client.Resources {
                 return ResourceManager.GetString("NoSkillsLabel", resourceCulture);
             }
         }
+        
+        internal static string DecisionHeader {
+            get {
+                return ResourceManager.GetString("DecisionHeader", resourceCulture);
+            }
+        }
+        
+        internal static string NoTendersMessage {
+            get {
+                return ResourceManager.GetString("NoTendersMessage", resourceCulture);
+            }
+        }
+        
+        internal static string TenderLineFormat {
+            get {
+                return ResourceManager.GetString("TenderLineFormat", resourceCulture);
+            }
+        }
+        
+        internal static string ApplyToTenderPrompt {
+            get {
+                return ResourceManager.GetString("ApplyToTenderPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string TenderNotFoundError {
+            get {
+                return ResourceManager.GetString("TenderNotFoundError", resourceCulture);
+            }
+        }
+        
+        internal static string NoFreeConsultantError {
+            get {
+                return ResourceManager.GetString("NoFreeConsultantError", resourceCulture);
+            }
+        }
+        
+        internal static string SelectConsultantsPrompt {
+            get {
+                return ResourceManager.GetString("SelectConsultantsPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string NoConsultantSelectedError {
+            get {
+                return ResourceManager.GetString("NoConsultantSelectedError", resourceCulture);
+            }
+        }
+        
+        internal static string ApplicationSubmittedMessage {
+            get {
+                return ResourceManager.GetString("ApplicationSubmittedMessage", resourceCulture);
+            }
+        }
     }
 }

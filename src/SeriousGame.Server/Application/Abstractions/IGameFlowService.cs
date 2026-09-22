@@ -10,7 +10,7 @@ public interface IGameFlowService
 {
 
     Task JoinGameRoom(string gameId, string playerId, string connectionId);
-    Task ApplyToTender(ApplyToTenderCommand command);
+    Task<CommandResult> ApplyToTender(ApplyToTenderCommand command);
     Task EnrollInTraining(EnrollInTrainingCommand command);
     Task SubmitDecisions(SubmitDecisionsCommand command);
     Task StartGame(Game game);

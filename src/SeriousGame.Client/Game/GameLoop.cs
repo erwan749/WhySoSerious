@@ -94,12 +94,73 @@ public class GameLoop
         // TODO US12 / US07-US09 : écrans réels du marché et collecte des décisions.
         RenderPhase(TurnPhase.MarketAnalysis);
         ShowMyCompanyScreen();
-        RenderPhase(TurnPhase.Decision);
+        await RunDecisionPhaseAsync(round);
 
         ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Submission));
         await _gameServices.SubmitDecisionsAsync();
 
         ConsoleUI.WriteInfo(ClientResources.WaitingForOtherPlayersMessage);
+    }
+    
+    private async Task RunDecisionPhaseAsync(RoundDto round)
+    {
+        ConsoleUI.WriteHeader(ClientResources.DecisionHeader);
+
+        if (round.Tenders.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoTendersMessage);
+            return;
+        }
+
+        foreach (var availableTender in round.Tenders)
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.TenderLineFormat, availableTender.Name, availableTender.Budget));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.ApplyToTenderPrompt);
+        var tenderName = ConsoleUI.ReadPrompt();
+
+        if (tenderName is null) return;
+
+        var tender = round.Tenders.FirstOrDefault(t => t.Name.Equals(tenderName, StringComparison.OrdinalIgnoreCase));
+
+        if (tender is null)
+        {
+            ConsoleUI.WriteError(ClientResources.TenderNotFoundError);
+            return;
+        }
+
+        var freeConsultants = _session.MyCompany?.Staff.Where(c => c.Status == ConsultantStatus.Free).ToList() ?? [];
+
+        if (freeConsultants.Count == 0)
+        {
+            ConsoleUI.WriteError(ClientResources.NoFreeConsultantError);
+            return;
+        }
+
+        foreach (var consultant in freeConsultants)
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, consultant.FullName, ClientResources.StatusFree));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.SelectConsultantsPrompt);
+        var input = ConsoleUI.ReadPrompt() ?? "";
+        var selectedNames = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        var selectedIds = freeConsultants
+            .Where(c => selectedNames.Any(n => n.Equals(c.FullName, StringComparison.OrdinalIgnoreCase)))
+            .Select(c => c.Id)
+            .ToList();
+
+        if (selectedIds.Count == 0)
+        {
+            ConsoleUI.WriteError(ClientResources.NoConsultantSelectedError);
+            return;
+        }
+
+        var error = await _gameServices.ApplyToTenderAsync(tender.Id, selectedIds);
+
+        ConsoleUI.WriteInfo(error is null ? ClientResources.ApplicationSubmittedMessage : $"❌ {error}");
     }
 
     private static void OnPlayerSubmitted(string nickname)
@@ -133,7 +194,6 @@ public class GameLoop
     {
         TurnPhase.MarketAnalysis => ClientResources.MarketAnalysisPlaceholder,
         TurnPhase.Simulation => ClientResources.SimulationPlaceholder,
-        TurnPhase.Decision => ClientResources.DecisionPlaceholder,
         TurnPhase.Submission => ClientResources.SubmissionPlaceholder,
         TurnPhase.Resolution => ClientResources.ResolutionPlaceholder,
         _ => throw new ArgumentOutOfRangeException(nameof(phase))
