@@ -73,13 +73,30 @@ public class AppMemory
 
         ConsultantsSeed =
         [
-            new ConsultantSeed
-            {
-                Firstname = "Ada",
-                Lastname = "Lovelace",
-                SalaryRequirement = 4_000,
-                Skills = [ new ConsultantSkill { Skill = Skills[2] } ] // JavaScript, niveau Zero par défaut
-            }
+            new ConsultantSeed { Firstname = "Alice", Lastname = "Martin" },
+            new ConsultantSeed { Firstname = "Bruno", Lastname = "Costa" },
+            new ConsultantSeed { Firstname = "Chloé", Lastname = "Nguyen" },
+            new ConsultantSeed { Firstname = "David", Lastname = "Okafor" },
+            new ConsultantSeed { Firstname = "Elena", Lastname = "Rossi" },
+            new ConsultantSeed { Firstname = "Farid", Lastname = "Haddad" },
+            new ConsultantSeed { Firstname = "Grace", Lastname = "Kim" },
+            new ConsultantSeed { Firstname = "Hugo", Lastname = "Meyer" },
+            new ConsultantSeed { Firstname = "Inès", Lastname = "Dubois" },
+            new ConsultantSeed { Firstname = "Jonas", Lastname = "Lindqvist" },
+            new ConsultantSeed { Firstname = "Karim", Lastname = "Belkacem" },
+            new ConsultantSeed { Firstname = "Léa", Lastname = "Fontaine" },
+            new ConsultantSeed { Firstname = "Marco", Lastname = "Silva" },
+            new ConsultantSeed { Firstname = "Nadia", Lastname = "Petrova" },
+            new ConsultantSeed { Firstname = "Omar", Lastname = "El-Amin" },
+            new ConsultantSeed { Firstname = "Priya", Lastname = "Sharma" },
+            new ConsultantSeed { Firstname = "Quentin", Lastname = "Roy" },
+            new ConsultantSeed { Firstname = "Rania", Lastname = "Saidi" },
+            new ConsultantSeed { Firstname = "Samuel", Lastname = "Weiss" },
+            new ConsultantSeed { Firstname = "Tariq", Lastname = "Aziz" },
+            new ConsultantSeed { Firstname = "Uma", Lastname = "Reddy" },
+            new ConsultantSeed { Firstname = "Victor Hugo", Lastname = "Alves" },
+            new ConsultantSeed { Firstname = "Wei", Lastname = "Zhang" },
+            new ConsultantSeed { Firstname = "Yasmin", Lastname = "Koné" }
         ];
     }
 }
