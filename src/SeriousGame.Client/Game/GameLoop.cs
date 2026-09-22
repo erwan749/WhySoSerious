@@ -103,9 +103,15 @@ public class GameLoop
     }
     
     private async Task RunDecisionPhaseAsync(RoundDto round)
-    {
-        ConsoleUI.WriteHeader(ClientResources.DecisionHeader);
+{
+    ConsoleUI.WriteHeader(ClientResources.DecisionHeader);
 
+    await RunTenderApplicationStepAsync(round);
+    await RunTrainingEnrollmentStepAsync(round);
+}
+
+    private async Task RunTenderApplicationStepAsync(RoundDto round)
+    {
         if (round.Tenders.Count == 0)
         {
             ConsoleUI.WriteInfo(ClientResources.NoTendersMessage);
@@ -130,7 +136,7 @@ public class GameLoop
             return;
         }
 
-        var freeConsultants = _session.MyCompany?.Staff.Where(c => c.Status == ConsultantStatus.Free).ToList() ?? [];
+        var freeConsultants = GetFreeConsultants();
 
         if (freeConsultants.Count == 0)
         {
@@ -162,6 +168,64 @@ public class GameLoop
 
         ConsoleUI.WriteInfo(error is null ? ClientResources.ApplicationSubmittedMessage : $"❌ {error}");
     }
+
+    private async Task RunTrainingEnrollmentStepAsync(RoundDto round)
+    {
+        if (round.Trainings.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoTrainingsMessage);
+            return;
+        }
+
+        foreach (var availableTraining in round.Trainings)
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.TrainingLineFormat, availableTraining.Name, availableTraining.Skill.Name, availableTraining.Cost));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.EnrollInTrainingPrompt);
+        var trainingName = ConsoleUI.ReadPrompt();
+
+        if (trainingName is null) return;
+
+        var training = round.Trainings.FirstOrDefault(t => t.Name.Equals(trainingName, StringComparison.OrdinalIgnoreCase));
+
+        if (training is null)
+        {
+            ConsoleUI.WriteError(ClientResources.TrainingNotFoundError);
+            return;
+        }
+
+        var freeConsultants = GetFreeConsultants();
+
+        if (freeConsultants.Count == 0)
+        {
+            ConsoleUI.WriteError(ClientResources.NoFreeConsultantError);
+            return;
+        }
+
+        foreach (var freeConsultant in freeConsultants)
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, freeConsultant.FullName, ClientResources.StatusFree));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.SelectConsultantPrompt);
+        var consultantName = ConsoleUI.ReadPrompt();
+
+        var consultant = freeConsultants.FirstOrDefault(c => c.FullName.Equals(consultantName, StringComparison.OrdinalIgnoreCase));
+
+        if (consultant is null)
+        {
+            ConsoleUI.WriteError(ClientResources.NoConsultantSelectedError);
+            return;
+        }
+
+        var error = await _gameServices.EnrollInTrainingAsync(training.Id, consultant.Id);
+
+        ConsoleUI.WriteInfo(error is null ? ClientResources.EnrollmentSubmittedMessage : $"❌ {error}");
+    }
+
+    private List<ConsultantDto> GetFreeConsultants() =>
+        _session.MyCompany?.Staff.Where(c => c.Status == ConsultantStatus.Free).ToList() ?? [];
 
     private static void OnPlayerSubmitted(string nickname)
     {

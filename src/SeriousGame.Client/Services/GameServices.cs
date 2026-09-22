@@ -108,6 +108,33 @@ public class GameServices : IGameServices
             return ex.Message;
         }
     }
+    
+    public async Task<string?> EnrollInTrainingAsync(string trainingId, string consultantId)
+    {
+        if (_currentRoundId is null)
+        {
+            _logger.LogWarning("Aucun tour en cours, inscription ignorée");
+            return "Aucun tour en cours.";
+        }
+
+        var command = new EnrollInTrainingCommand
+        {
+            PlayerId = _clientSession.PlayerId,
+            RoundId = _currentRoundId,
+            TrainingId = trainingId,
+            ConsultantId = consultantId
+        };
+
+        try
+        {
+            await _gameConnection.InvokeAsync(nameof(IGameHubServer.EnrollInTraining), command);
+            return null;
+        }
+        catch (HubException ex)
+        {
+            return ex.Message;
+        }
+    }
 
     private void RegisterHandlers()
     {

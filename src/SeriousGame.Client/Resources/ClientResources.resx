@@ -237,4 +237,22 @@ Games available:
     <data name="ApplicationSubmittedMessage" xml:space="preserve">
         <value>Application submitted.</value>
     </data>
+    <data name="NoTrainingsMessage" xml:space="preserve">
+        <value>No trainings available this round.</value>
+    </data>
+    <data name="TrainingLineFormat" xml:space="preserve">
+        <value>- {0} ({1}, cost {2} €)</value>
+    </data>
+    <data name="EnrollInTrainingPrompt" xml:space="preserve">
+        <value>Which training do you want to enroll in? (exact name, or press Enter to skip)</value>
+    </data>
+    <data name="TrainingNotFoundError" xml:space="preserve">
+        <value>Training not found.</value>
+    </data>
+    <data name="SelectConsultantPrompt" xml:space="preserve">
+        <value>Which consultant should be enrolled? (exact name)</value>
+    </data>
+    <data name="EnrollmentSubmittedMessage" xml:space="preserve">
+        <value>Enrollment submitted.</value>
+    </data>
 </root>

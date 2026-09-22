@@ -80,9 +80,43 @@ public class GameFlowService : IGameFlowService
         return Task.FromResult(CommandResult.Ok());
     }
 
-    public Task EnrollInTraining(EnrollInTrainingCommand command)
+    public Task<CommandResult> EnrollInTraining(EnrollInTrainingCommand command)
     {
-        return Task.CompletedTask;
+        var game = _gameService.GetGameByRoundId(command.RoundId);
+        var round = game?.Rounds.FirstOrDefault(r => r.Id == command.RoundId);
+        var company = game?.Companies.FirstOrDefault(c => c.PlayerOwner.Id == command.PlayerId);
+        var training = round?.Trainings.FirstOrDefault(t => t.Id == command.TrainingId);
+        var consultant = company?.Staff.FirstOrDefault(c => c.Id == command.ConsultantId);
+
+        if (game is null || round is null || company is null || training is null || consultant is null)
+        {
+            _logger.LogWarning(
+                "Invalid EnrollInTraining: round {RoundId}, player {PlayerId}, training {TrainingId}, consultant {ConsultantId}",
+                command.RoundId, command.PlayerId, command.TrainingId, command.ConsultantId);
+            return Task.FromResult(CommandResult.Fail("Inscription invalide."));
+        }
+
+        lock (game)
+        {
+            var validation = TrainingEnrollmentValidator.Validate(round, company, training, consultant);
+
+            if (!validation.Success)
+            {
+                return Task.FromResult(validation);
+            }
+
+            company.Withdraw(training.Cost);
+
+            company.TrainingEnrollments.Add(new TrainingEnrollment
+            {
+                Company = company,
+                Consultant = consultant,
+                Training = training,
+                RemainingRounds = training.RoundsNumber
+            });
+        }
+
+        return Task.FromResult(CommandResult.Ok());
     }
 
     public async Task JoinGameRoom(string gameId, string playerId, string connectionId)

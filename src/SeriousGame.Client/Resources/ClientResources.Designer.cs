@@ -464,5 +464,41 @@ namespace Client.Resources {
                 return ResourceManager.GetString("ApplicationSubmittedMessage", resourceCulture);
             }
         }
+        
+        internal static string NoTrainingsMessage {
+            get {
+                return ResourceManager.GetString("NoTrainingsMessage", resourceCulture);
+            }
+        }
+        
+        internal static string TrainingLineFormat {
+            get {
+                return ResourceManager.GetString("TrainingLineFormat", resourceCulture);
+            }
+        }
+        
+        internal static string EnrollInTrainingPrompt {
+            get {
+                return ResourceManager.GetString("EnrollInTrainingPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string TrainingNotFoundError {
+            get {
+                return ResourceManager.GetString("TrainingNotFoundError", resourceCulture);
+            }
+        }
+        
+        internal static string SelectConsultantPrompt {
+            get {
+                return ResourceManager.GetString("SelectConsultantPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string EnrollmentSubmittedMessage {
+            get {
+                return ResourceManager.GetString("EnrollmentSubmittedMessage", resourceCulture);
+            }
+        }
     }
 }

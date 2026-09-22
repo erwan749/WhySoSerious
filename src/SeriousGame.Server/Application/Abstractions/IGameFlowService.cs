@@ -11,7 +11,7 @@ public interface IGameFlowService
 
     Task JoinGameRoom(string gameId, string playerId, string connectionId);
     Task<CommandResult> ApplyToTender(ApplyToTenderCommand command);
-    Task EnrollInTraining(EnrollInTrainingCommand command);
+    Task<CommandResult> EnrollInTraining(EnrollInTrainingCommand command);
     Task SubmitDecisions(SubmitDecisionsCommand command);
     Task StartGame(Game game);
 

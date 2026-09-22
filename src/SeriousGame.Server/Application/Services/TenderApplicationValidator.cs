@@ -29,7 +29,7 @@ public static class TenderApplicationValidator
                 return CommandResult.Fail($"{consultant.FullName} n'appartient pas à cette entreprise.");
             }
 
-            if (!IsFree(round, company, consultant))
+            if (!ConsultantAvailability.IsFree(round, company, consultant))
             {
                 return CommandResult.Fail($"{consultant.FullName} n'est pas disponible ce tour.");
             }
