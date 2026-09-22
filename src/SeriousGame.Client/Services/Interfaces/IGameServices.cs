@@ -8,7 +8,6 @@ namespace Client.Services.Interfaces;
 public interface IGameServices
 {
 
-    event Action<CompanyDto>? GameStarted;
     event Action<RoundDto>? RoundStarted;
     event Action<string>? PlayerSubmitted;
     event Action<RoundResultDto>? RoundResolved;
