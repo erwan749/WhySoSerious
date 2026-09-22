@@ -255,4 +255,19 @@ Games available:
     <data name="EnrollmentSubmittedMessage" xml:space="preserve">
         <value>Enrollment submitted.</value>
     </data>
+    <data name="SubmissionHeader" xml:space="preserve">
+        <value>Review your decisions</value>
+    </data>
+    <data name="NoDecisionsMessage" xml:space="preserve">
+        <value>No decisions made this round.</value>
+    </data>
+    <data name="ConfirmSubmissionPrompt" xml:space="preserve">
+        <value>Press Enter to confirm and submit.</value>
+    </data>
+    <data name="TenderDecisionSummaryFormat" xml:space="preserve">
+        <value>Applied to {0} with {1} consultant(s)</value>
+    </data>
+    <data name="TrainingDecisionSummaryFormat" xml:space="preserve">
+        <value>Enrolled {0} in {1}</value>
+    </data>
 </root>

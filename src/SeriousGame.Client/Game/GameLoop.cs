@@ -16,6 +16,7 @@ public class GameLoop
 {
     private readonly ClientSession _session;
     private readonly IGameServices _gameServices;
+    private readonly List<string> _roundDecisions = [];
 
     // Complété par le handler GameEnded : c'est ce qui fait sortir RunAsync.
     private readonly TaskCompletionSource _gameEndedSignal =
@@ -91,15 +92,38 @@ public class GameLoop
     {
         ConsoleUI.WriteHeader(string.Format(ClientResources.RoundHeaderFormat, round.Order, round.TotalRounds));
 
-        // TODO US12 / US07-US09 : écrans réels du marché et collecte des décisions.
+        _roundDecisions.Clear();
+
+        // TODO US12 : écran réel du marché.
         RenderPhase(TurnPhase.MarketAnalysis);
         ShowMyCompanyScreen();
         await RunDecisionPhaseAsync(round);
 
-        ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Submission));
-        await _gameServices.SubmitDecisionsAsync();
+        await RunSubmissionPhaseAsync();
 
         ConsoleUI.WriteInfo(ClientResources.WaitingForOtherPlayersMessage);
+    }
+    
+    private async Task RunSubmissionPhaseAsync()
+    {
+        ConsoleUI.WriteHeader(ClientResources.SubmissionHeader);
+
+        if (_roundDecisions.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoDecisionsMessage);
+        }
+        else
+        {
+            foreach (var decision in _roundDecisions)
+            {
+                ConsoleUI.WriteInfo($"- {decision}");
+            }
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.ConfirmSubmissionPrompt);
+        Console.ReadLine();
+
+        await _gameServices.SubmitDecisionsAsync();
     }
     
     private async Task RunDecisionPhaseAsync(RoundDto round)
@@ -166,7 +190,15 @@ public class GameLoop
 
         var error = await _gameServices.ApplyToTenderAsync(tender.Id, selectedIds);
 
-        ConsoleUI.WriteInfo(error is null ? ClientResources.ApplicationSubmittedMessage : $"❌ {error}");
+        if (error is null)
+        {
+            ConsoleUI.WriteInfo(ClientResources.ApplicationSubmittedMessage);
+            _roundDecisions.Add(string.Format(ClientResources.TenderDecisionSummaryFormat, tender.Name, selectedIds.Count));
+        }
+        else
+        {
+            ConsoleUI.WriteError(error);
+        }
     }
 
     private async Task RunTrainingEnrollmentStepAsync(RoundDto round)
@@ -221,7 +253,15 @@ public class GameLoop
 
         var error = await _gameServices.EnrollInTrainingAsync(training.Id, consultant.Id);
 
-        ConsoleUI.WriteInfo(error is null ? ClientResources.EnrollmentSubmittedMessage : $"❌ {error}");
+        if (error is null)
+        {
+            ConsoleUI.WriteInfo(ClientResources.EnrollmentSubmittedMessage);
+            _roundDecisions.Add(string.Format(ClientResources.TrainingDecisionSummaryFormat, consultant.FullName, training.Name));
+        }
+        else
+        {
+            ConsoleUI.WriteError(error);
+        }
     }
 
     private List<ConsultantDto> GetFreeConsultants() =>
@@ -258,7 +298,6 @@ public class GameLoop
     {
         TurnPhase.MarketAnalysis => ClientResources.MarketAnalysisPlaceholder,
         TurnPhase.Simulation => ClientResources.SimulationPlaceholder,
-        TurnPhase.Submission => ClientResources.SubmissionPlaceholder,
         TurnPhase.Resolution => ClientResources.ResolutionPlaceholder,
         _ => throw new ArgumentOutOfRangeException(nameof(phase))
     };

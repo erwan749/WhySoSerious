@@ -500,5 +500,35 @@ namespace Client.Resources {
                 return ResourceManager.GetString("EnrollmentSubmittedMessage", resourceCulture);
             }
         }
+        
+        internal static string SubmissionHeader {
+            get {
+                return ResourceManager.GetString("SubmissionHeader", resourceCulture);
+            }
+        }
+        
+        internal static string NoDecisionsMessage {
+            get {
+                return ResourceManager.GetString("NoDecisionsMessage", resourceCulture);
+            }
+        }
+        
+        internal static string ConfirmSubmissionPrompt {
+            get {
+                return ResourceManager.GetString("ConfirmSubmissionPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string TenderDecisionSummaryFormat {
+            get {
+                return ResourceManager.GetString("TenderDecisionSummaryFormat", resourceCulture);
+            }
+        }
+        
+        internal static string TrainingDecisionSummaryFormat {
+            get {
+                return ResourceManager.GetString("TrainingDecisionSummaryFormat", resourceCulture);
+            }
+        }
     }
 }
