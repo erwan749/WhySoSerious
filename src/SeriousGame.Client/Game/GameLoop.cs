@@ -169,7 +169,7 @@ public class GameLoop
                 : ClientResources.NoSkillsLabel;
 
             ConsoleUI.WriteInfo($"   {string.Format(ClientResources.ConsultantSkillsFormat, skillsLabel)}");
-        }
+        } 
 
         ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);
         Console.ReadLine();
