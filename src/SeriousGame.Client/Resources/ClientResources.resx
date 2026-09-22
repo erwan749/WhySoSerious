@@ -204,4 +204,10 @@ Games available:
     <data name="NoCompanyError" xml:space="preserve">
         <value>No Company found</value>
     </data>
+    <data name="ConsultantSkillsFormat" xml:space="preserve">
+        <value>Skills : {0}</value>
+    </data>
+    <data name="NoSkillsLabel" xml:space="preserve">
+        <value>None</value>
+    </data>
 </root>

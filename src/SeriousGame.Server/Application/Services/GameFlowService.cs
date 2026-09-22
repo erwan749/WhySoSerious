@@ -104,7 +104,7 @@ public class GameFlowService : IGameFlowService
             game.Companies.Add(company);
         }
 
-        ConsultantFactory.AssignInitialStaff(game.Companies.ToList(), _appMemory.ConsultantsSeed, Random.Shared);
+        ConsultantFactory.AssignInitialStaff(game.Companies.ToList(), _appMemory.ConsultantsSeed, _appMemory.Skills, Random.Shared);
 
         return Task.CompletedTask;
     }

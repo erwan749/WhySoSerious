@@ -398,5 +398,17 @@ namespace Client.Resources {
                 return ResourceManager.GetString("NoCompanyError", resourceCulture);
             }
         }
+        
+        internal static string ConsultantSkillsFormat {
+            get {
+                return ResourceManager.GetString("ConsultantSkillsFormat", resourceCulture);
+            }
+        }
+        
+        internal static string NoSkillsLabel {
+            get {
+                return ResourceManager.GetString("NoSkillsLabel", resourceCulture);
+            }
+        }
     }
 }

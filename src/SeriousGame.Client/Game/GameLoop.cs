@@ -163,6 +163,12 @@ public class GameLoop
             };
 
             ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, consultant.FullName, statusLabel));
+
+            var skillsLabel = consultant.Skills.Count > 0
+                ? string.Join(", ", consultant.Skills.Select(s => s.Skill.Name))
+                : ClientResources.NoSkillsLabel;
+
+            ConsoleUI.WriteInfo($"   {string.Format(ClientResources.ConsultantSkillsFormat, skillsLabel)}");
         }
 
         ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);
