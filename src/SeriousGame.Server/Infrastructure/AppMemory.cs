@@ -73,13 +73,39 @@ public class AppMemory
 
         ConsultantsSeed =
         [
-            new ConsultantSeed
+            /*new ConsultantSeed
             {
                 Firstname = "Ada",
                 Lastname = "Lovelace",
                 SalaryRequirement = 4_000,
                 Skills = [ new ConsultantSkill { Skill = Skills[2] } ] // JavaScript, niveau Zero par défaut
-            }
+            }*/
+            
+            new ConsultantSeed { Firstname = "Alice", Lastname = "Martin", SalaryRequirement = 3_200, Skills = [ new ConsultantSkill { Skill = Skills[0] }, new ConsultantSkill { Skill = Skills[1] } ] }, // HTML, CSS
+            new ConsultantSeed { Firstname = "Bruno", Lastname = "Costa", SalaryRequirement = 3_500, Skills = [ new ConsultantSkill { Skill = Skills[2] } ] }, // JavaScript
+            new ConsultantSeed { Firstname = "Chloé", Lastname = "Nguyen", SalaryRequirement = 4_200, Skills = [ new ConsultantSkill { Skill = Skills[3] }, new ConsultantSkill { Skill = Skills[4] } ] }, // TypeScript, React
+            new ConsultantSeed { Firstname = "David", Lastname = "Okafor", SalaryRequirement = 3_800, Skills = [ new ConsultantSkill { Skill = Skills[5] } ] }, // Angular
+            new ConsultantSeed { Firstname = "Elena", Lastname = "Rossi", SalaryRequirement = 3_600, Skills = [ new ConsultantSkill { Skill = Skills[6] } ] }, // Vue.js
+            new ConsultantSeed { Firstname = "Farid", Lastname = "Haddad", SalaryRequirement = 4_000, Skills = [ new ConsultantSkill { Skill = Skills[7] }, new ConsultantSkill { Skill = Skills[8] } ] }, // Node.js, Express.js
+            new ConsultantSeed { Firstname = "Grace", Lastname = "Kim", SalaryRequirement = 4_500, Skills = [ new ConsultantSkill { Skill = Skills[9] } ] }, // ASP.NET Core
+            new ConsultantSeed { Firstname = "Hugo", Lastname = "Meyer", SalaryRequirement = 3_700, Skills = [ new ConsultantSkill { Skill = Skills[10] } ] }, // Ruby on Rails
+            new ConsultantSeed { Firstname = "Inès", Lastname = "Dubois", SalaryRequirement = 3_900, Skills = [ new ConsultantSkill { Skill = Skills[11] } ] }, // Django
+            new ConsultantSeed { Firstname = "Jonas", Lastname = "Lindqvist", SalaryRequirement = 3_400, Skills = [ new ConsultantSkill { Skill = Skills[12] } ] }, // Flask
+            new ConsultantSeed { Firstname = "Karim", Lastname = "Belkacem", SalaryRequirement = 3_100, Skills = [ new ConsultantSkill { Skill = Skills[13] } ] }, // PHP
+            new ConsultantSeed { Firstname = "Léa", Lastname = "Fontaine", SalaryRequirement = 3_300, Skills = [ new ConsultantSkill { Skill = Skills[14] } ] }, // Laravel
+            new ConsultantSeed { Firstname = "Marco", Lastname = "Silva", SalaryRequirement = 4_600, Skills = [ new ConsultantSkill { Skill = Skills[15] } ] }, // Spring Boot
+            new ConsultantSeed { Firstname = "Nadia", Lastname = "Petrova", SalaryRequirement = 3_000, Skills = [ new ConsultantSkill { Skill = Skills[16] } ] }, // SQL
+            new ConsultantSeed { Firstname = "Omar", Lastname = "El-Amin", SalaryRequirement = 3_400, Skills = [ new ConsultantSkill { Skill = Skills[17] } ] }, // NoSQL
+            new ConsultantSeed { Firstname = "Priya", Lastname = "Sharma", SalaryRequirement = 4_300, Skills = [ new ConsultantSkill { Skill = Skills[18] }, new ConsultantSkill { Skill = Skills[19] } ] }, // GraphQL, REST APIs
+            new ConsultantSeed { Firstname = "Quentin", Lastname = "Roy", SalaryRequirement = 3_300, Skills = [ new ConsultantSkill { Skill = Skills[0] }, new ConsultantSkill { Skill = Skills[2] } ] }, // HTML, JavaScript
+            new ConsultantSeed { Firstname = "Rania", Lastname = "Saidi", SalaryRequirement = 3_900, Skills = [ new ConsultantSkill { Skill = Skills[1] }, new ConsultantSkill { Skill = Skills[4] } ] }, // CSS, React
+            new ConsultantSeed { Firstname = "Samuel", Lastname = "Weiss", SalaryRequirement = 4_400, Skills = [ new ConsultantSkill { Skill = Skills[3] }, new ConsultantSkill { Skill = Skills[7] } ] }, // TypeScript, Node.js
+            new ConsultantSeed { Firstname = "Tariq", Lastname = "Aziz", SalaryRequirement = 4_100, Skills = [ new ConsultantSkill { Skill = Skills[5] }, new ConsultantSkill { Skill = Skills[16] } ] }, // Angular, SQL
+            new ConsultantSeed { Firstname = "Uma", Lastname = "Reddy", SalaryRequirement = 4_200, Skills = [ new ConsultantSkill { Skill = Skills[6] }, new ConsultantSkill { Skill = Skills[18] } ] }, // Vue.js, GraphQL
+            new ConsultantSeed { Firstname = "Victor Hugo", Lastname = "Alves", SalaryRequirement = 3_800, Skills = [ new ConsultantSkill { Skill = Skills[8] }, new ConsultantSkill { Skill = Skills[17] } ] }, // Express.js, NoSQL
+            new ConsultantSeed { Firstname = "Wei", Lastname = "Zhang", SalaryRequirement = 4_700, Skills = [ new ConsultantSkill { Skill = Skills[9] }, new ConsultantSkill { Skill = Skills[19] } ] }, // ASP.NET Core, REST APIs
+            new ConsultantSeed { Firstname = "Yasmin", Lastname = "Koné", SalaryRequirement = 3_600, Skills = [ new ConsultantSkill { Skill = Skills[11] }, new ConsultantSkill { Skill = Skills[13] } ] } // Django, PHP
+
         ];
     }
 }
