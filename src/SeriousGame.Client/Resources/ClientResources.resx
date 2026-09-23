@@ -1,273 +1,393 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>1.3</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <data name="GameName" xml:space="preserve">
-        <value>__        ___             ____          ____            _                   _
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GameName" xml:space="preserve">
+    <value>__        ___             ____          ____            _                   _
  \ \      / / |__  _   _  / ___|  ___   / ___|  ___ _ __(_) ___  _   _ ___  | |
   \ \ /\ / /| '_ \| | | | \___ \ / _ \  \___ \ / _ \ '__| |/ _ \| | | / __| | |
    \ V  V / | | | | |_| |  ___) | (_) |  ___) |  __/ |  | | (_) | |_| \__ \ |_|
     \_/\_/  |_| |_|\__, | |____/ \___/  |____/ \___|_|  |_|\___/ \__,_|___/ (_)
                    |___/                                                       </value>
-    </data>
-    <data name="WindowTitle" xml:space="preserve">
-        <value>🎮 Why So Serious!</value>
-    </data>
-    <data name="GoodbyeMessage" xml:space="preserve">
-        <value>Good bye {0}! See you soon!.</value>
-    </data>
-    <data name="ChooseLoginPrompt" xml:space="preserve">
-        <value>Choose your login:</value>
-    </data>
-    <data name="MainMenuHeader" xml:space="preserve">
-        <value>Main menu</value>
-    </data>
-    <data name="MenuOptionCreateGame" xml:space="preserve">
-        <value>1. Create a game</value>
-    </data>
-    <data name="MenuOptionJoinGame" xml:space="preserve">
-        <value>2. Join a game</value>
-    </data>
-    <data name="MenuOptionQuit" xml:space="preserve">
-        <value>3. Quit</value>
-    </data>
-    <data name="YourChoicePrompt" xml:space="preserve">
-        <value>
+  </data>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>🎮 Why So Serious!</value>
+  </data>
+  <data name="GoodbyeMessage" xml:space="preserve">
+    <value>Good bye {0}! See you soon!.</value>
+  </data>
+  <data name="ChooseLoginPrompt" xml:space="preserve">
+    <value>Choose your login:</value>
+  </data>
+  <data name="MainMenuHeader" xml:space="preserve">
+    <value>Main menu</value>
+  </data>
+  <data name="MenuOptionCreateGame" xml:space="preserve">
+    <value>1. Create a game</value>
+  </data>
+  <data name="MenuOptionJoinGame" xml:space="preserve">
+    <value>2. Join a game</value>
+  </data>
+  <data name="MenuOptionQuit" xml:space="preserve">
+    <value>3. Quit</value>
+  </data>
+  <data name="YourChoicePrompt" xml:space="preserve">
+    <value>
 Your choice:</value>
-    </data>
-    <data name="InvalidChoiceError" xml:space="preserve">
-        <value>Your choice isn't valid.</value>
-    </data>
-    <data name="WaitingForGameHeader" xml:space="preserve">
-        <value>🕹 Waiting for game {0}</value>
-    </data>
-    <data name="PlayersWaitingPrompt" xml:space="preserve">
-        <value>Players ({0}/{1}) : {2}</value>
-    </data>
-    <data name="GameStartingMessage" xml:space="preserve">
-        <value>🚀 The Game {0} starts!</value>
-    </data>
-    <data name="ServerMessagePrefix" xml:space="preserve">
-        <value>[From the Server] {0}</value>
-    </data>
-    <data name="ReconnectingWarning" xml:space="preserve">
-        <value>⚠️ Reconnecting...</value>
-    </data>
-    <data name="ReconnectedMessage" xml:space="preserve">
-        <value>🔗 Reconnected!</value>
-    </data>
-    <data name="ConnectedToHubMessage" xml:space="preserve">
-        <value>Connected to the Hub: {0}</value>
-    </data>
-    <data name="FailedToConnectError" xml:space="preserve">
-        <value>Failed to connect to Hub: {0}. If the problem persists, please contact an administrator.</value>
-    </data>
-    <data name="ChooseGameNamePrompt" xml:space="preserve">
-        <value>Choose a name for your game:</value>
-    </data>
-    <data name="GameCreatedMessage" xml:space="preserve">
-        <value>🧩 Game {0} created, waiting for other players...</value>
-    </data>
-    <data name="NoGamesAvailableMessage" xml:space="preserve">
-        <value>No game available at this time.</value>
-    </data>
-    <data name="GamesAvailableHeader" xml:space="preserve">
-        <value>
+  </data>
+  <data name="InvalidChoiceError" xml:space="preserve">
+    <value>Your choice isn't valid.</value>
+  </data>
+  <data name="WaitingForGameHeader" xml:space="preserve">
+    <value>🕹 Waiting for game {0}</value>
+  </data>
+  <data name="PlayersWaitingPrompt" xml:space="preserve">
+    <value>Players ({0}/{1}) : {2}</value>
+  </data>
+  <data name="GameStartingMessage" xml:space="preserve">
+    <value>🚀 The Game {0} starts!</value>
+  </data>
+  <data name="ServerMessagePrefix" xml:space="preserve">
+    <value>[From the Server] {0}</value>
+  </data>
+  <data name="ReconnectingWarning" xml:space="preserve">
+    <value>⚠️ Reconnecting...</value>
+  </data>
+  <data name="ReconnectedMessage" xml:space="preserve">
+    <value>🔗 Reconnected!</value>
+  </data>
+  <data name="ConnectedToHubMessage" xml:space="preserve">
+    <value>Connected to the Hub: {0}</value>
+  </data>
+  <data name="FailedToConnectError" xml:space="preserve">
+    <value>Failed to connect to Hub: {0}. If the problem persists, please contact an administrator.</value>
+  </data>
+  <data name="ChooseGameNamePrompt" xml:space="preserve">
+    <value>Choose a name for your game:</value>
+  </data>
+  <data name="GameCreatedMessage" xml:space="preserve">
+    <value>🧩 Game {0} created, waiting for other players...</value>
+  </data>
+  <data name="NoGamesAvailableMessage" xml:space="preserve">
+    <value>No game available at this time.</value>
+  </data>
+  <data name="GamesAvailableHeader" xml:space="preserve">
+    <value>
 Games available:
 </value>
-    </data>
-    <data name="GameListItemFormat" xml:space="preserve">
-        <value>{0}. {1} ({2}/{3})</value>
-    </data>
-    <data name="ReturnToMainMenuFormat" xml:space="preserve">
-        <value>{0}. Return to the main menu.
+  </data>
+  <data name="GameListItemFormat" xml:space="preserve">
+    <value>{0}. {1} ({2}/{3})</value>
+  </data>
+  <data name="ReturnToMainMenuFormat" xml:space="preserve">
+    <value>{0}. Return to the main menu.
 </value>
-    </data>
-    <data name="EnterGameNumberPrompt" xml:space="preserve">
-        <value>Enter the number of the game you want to join: </value>
-    </data>
-    <data name="CannotJoinGameError" xml:space="preserve">
-        <value>Cannot join game {0}. Shoot again!</value>
-    </data>
-    <data name="JoinedGameMessage" xml:space="preserve">
-        <value>🔗 You have joined the game {0}</value>
-    </data>
-    <data name="InvalidChoiceMessage" xml:space="preserve">
-        <value>Choice is invalid.</value>
-    </data>
-    <data name="CreateCompanyHeader" xml:space="preserve">
-        <value>Create your company</value>
-    </data>
-    <data name="CompanyNamePrompt" xml:space="preserve">
-        <value>Enter the name of the company:</value>
-    </data>
-    <data name="CannotInvokeError" xml:space="preserve">
-        <value>Cannot invoke '{0}': connection state = {1}</value>
-    </data>
-    <data name="HubExceptionError" xml:space="preserve">
-        <value>HubException while invoking '{0}': {1}</value>
-    </data>
-    <data name="InvalidOperationError" xml:space="preserve">
-        <value>Invalid operation during '{0}': {1}</value>
-    </data>
-    <data name="UnexpectedError" xml:space="preserve">
-        <value>Unexpected error while sending '{0}': {1}</value>
-    </data>
-    <data name="DisconnectedFromLobbyMessage" xml:space="preserve">
-        <value>You have been disconnected from the lobby.</value>
-    </data>
-    <data name="NotLoggedInLabel" xml:space="preserve">
-        <value>Not logged in</value>
-    </data>
-    <data name="WaitingAnimationLabel" xml:space="preserve">
-        <value>Waiting for other players</value>
-    </data>
-    <data name="CancelWaitingHint" xml:space="preserve">
-        <value>Press Esc to cancel waiting and return to the main menu.</value>
-    </data>
-    <data name="LeftGameMessageFormat" xml:space="preserve">
-        <value>You left the game {0}.</value>
-    </data>
-    <data name="RoundHeaderFormat" xml:space="preserve">
-        <value>Round {0}/{1}</value>
-    </data>
-    <data name="MarketAnalysisPlaceholder" xml:space="preserve">
-        <value>📊 Market analysis (coming soon)</value>
-    </data>
-    <data name="SimulationPlaceholder" xml:space="preserve">
-        <value>🧮 Simulation (coming soon)</value>
-    </data>
-    <data name="DecisionPlaceholder" xml:space="preserve">
-        <value>✅ Decision (coming soon)</value>
-    </data>
-    <data name="SubmissionPlaceholder" xml:space="preserve">
-        <value>📤 Submitting choices (coming soon)</value>
-    </data>
-    <data name="ResolutionPlaceholder" xml:space="preserve">
-        <value>⏳ Resolving the round (coming soon)</value>
-    </data>
-    <data name="PressEnterToContinuePrompt" xml:space="preserve">
-        <value>Press Enter to continue...</value>
-    </data>
-    <data name="GameOverHeader" xml:space="preserve">
-        <value>🏁 Game over</value>
-    </data>
-    <data name="GameOverMessage" xml:space="preserve">
-        <value>Thanks for playing! (final scoring not implemented yet)</value>
-    </data>
-    <data name="PlayerSubmittedFormat" xml:space="preserve">
-        <value>📨 {0} submitted their decisions.</value>
-    </data>
-    <data name="WaitingForOtherPlayersMessage" xml:space="preserve">
-        <value>⌛ Waiting for the other players...</value>
-    </data>
-    <data name="CompanyAssignedFormat" xml:space="preserve">
-        <value>Your company : {0}</value>
-    </data>
-    <data name="MyCompanyHeaderFormat" xml:space="preserve">
-        <value>My Company : {0}</value>
-    </data>
-    <data name="TreasuryFormat" xml:space="preserve">
-        <value>Treasury : {0} €</value>
-    </data>
-    <data name="RevenueFormat" xml:space="preserve">
-        <value>Revenue : {0} €</value>
-    </data>
-    <data name="ConsultantLineFormat" xml:space="preserve">
-        <value>- {0} ({1})</value>
-    </data>
-    <data name="StatusFree" xml:space="preserve">
-        <value>Free</value>
-    </data>
-    <data name="StatusOnMission" xml:space="preserve">
-        <value>On Mission</value>
-    </data>
-    <data name="StatusInTraining" xml:space="preserve">
-        <value>InTraining</value>
-    </data>
-    <data name="NoCompanyError" xml:space="preserve">
-        <value>No Company found</value>
-    </data>
-    <data name="ConsultantSkillsFormat" xml:space="preserve">
-        <value>Skills : {0}</value>
-    </data>
-    <data name="NoSkillsLabel" xml:space="preserve">
-        <value>None</value>
-    </data>
-    <data name="DecisionHeader" xml:space="preserve">
-        <value>Tender applications</value>
-    </data>
-    <data name="NoTendersMessage" xml:space="preserve">
-        <value>No tenders available this round.</value>
-    </data>
-    <data name="TenderLineFormat" xml:space="preserve">
-        <value>- {0} (budget {1} €)</value>
-    </data>
-    <data name="ApplyToTenderPrompt" xml:space="preserve">
-        <value>Which tender do you want to apply to? (exact name, or press Enter to skip)</value>
-    </data>
-    <data name="TenderNotFoundError" xml:space="preserve">
-        <value>Tender not found.</value>
-    </data>
-    <data name="NoFreeConsultantError" xml:space="preserve">
-        <value>No consultant available to apply.</value>
-    </data>
-    <data name="SelectConsultantsPrompt" xml:space="preserve">
-        <value>Which consultants should be assigned? (comma-separated names)</value>
-    </data>
-    <data name="NoConsultantSelectedError" xml:space="preserve">
-        <value>No consultant selected.</value>
-    </data>
-    <data name="ApplicationSubmittedMessage" xml:space="preserve">
-        <value>Application submitted.</value>
-    </data>
-    <data name="NoTrainingsMessage" xml:space="preserve">
-        <value>No trainings available this round.</value>
-    </data>
-    <data name="TrainingLineFormat" xml:space="preserve">
-        <value>- {0} ({1}, cost {2} €)</value>
-    </data>
-    <data name="EnrollInTrainingPrompt" xml:space="preserve">
-        <value>Which training do you want to enroll in? (exact name, or press Enter to skip)</value>
-    </data>
-    <data name="TrainingNotFoundError" xml:space="preserve">
-        <value>Training not found.</value>
-    </data>
-    <data name="SelectConsultantPrompt" xml:space="preserve">
-        <value>Which consultant should be enrolled? (exact name)</value>
-    </data>
-    <data name="EnrollmentSubmittedMessage" xml:space="preserve">
-        <value>Enrollment submitted.</value>
-    </data>
-    <data name="SubmissionHeader" xml:space="preserve">
-        <value>Review your decisions</value>
-    </data>
-    <data name="NoDecisionsMessage" xml:space="preserve">
-        <value>No decisions made this round.</value>
-    </data>
-    <data name="ConfirmSubmissionPrompt" xml:space="preserve">
-        <value>Press Enter to confirm and submit.</value>
-    </data>
-    <data name="TenderDecisionSummaryFormat" xml:space="preserve">
-        <value>Applied to {0} with {1} consultant(s)</value>
-    </data>
-    <data name="TrainingDecisionSummaryFormat" xml:space="preserve">
-        <value>Enrolled {0} in {1}</value>
-    </data>
+  </data>
+  <data name="EnterGameNumberPrompt" xml:space="preserve">
+    <value>Enter the number of the game you want to join: </value>
+  </data>
+  <data name="CannotJoinGameError" xml:space="preserve">
+    <value>Cannot join game {0}. Shoot again!</value>
+  </data>
+  <data name="JoinedGameMessage" xml:space="preserve">
+    <value>🔗 You have joined the game {0}</value>
+  </data>
+  <data name="InvalidChoiceMessage" xml:space="preserve">
+    <value>Choice is invalid.</value>
+  </data>
+  <data name="CreateCompanyHeader" xml:space="preserve">
+    <value>Create your company</value>
+  </data>
+  <data name="CompanyNamePrompt" xml:space="preserve">
+    <value>Enter the name of the company:</value>
+  </data>
+  <data name="CannotInvokeError" xml:space="preserve">
+    <value>Cannot invoke '{0}': connection state = {1}</value>
+  </data>
+  <data name="HubExceptionError" xml:space="preserve">
+    <value>HubException while invoking '{0}': {1}</value>
+  </data>
+  <data name="InvalidOperationError" xml:space="preserve">
+    <value>Invalid operation during '{0}': {1}</value>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>Unexpected error while sending '{0}': {1}</value>
+  </data>
+  <data name="DisconnectedFromLobbyMessage" xml:space="preserve">
+    <value>You have been disconnected from the lobby.</value>
+  </data>
+  <data name="NotLoggedInLabel" xml:space="preserve">
+    <value>Not logged in</value>
+  </data>
+  <data name="WaitingAnimationLabel" xml:space="preserve">
+    <value>Waiting for other players</value>
+  </data>
+  <data name="CancelWaitingHint" xml:space="preserve">
+    <value>Press Esc to cancel waiting and return to the main menu.</value>
+  </data>
+  <data name="LeftGameMessageFormat" xml:space="preserve">
+    <value>You left the game {0}.</value>
+  </data>
+  <data name="RoundHeaderFormat" xml:space="preserve">
+    <value>Round {0}/{1}</value>
+  </data>
+  <data name="MarketAnalysisPlaceholder" xml:space="preserve">
+    <value>📊 Market analysis (coming soon)</value>
+  </data>
+  <data name="SimulationPlaceholder" xml:space="preserve">
+    <value>🧮 Simulation (coming soon)</value>
+  </data>
+  <data name="DecisionPlaceholder" xml:space="preserve">
+    <value>✅ Decision (coming soon)</value>
+  </data>
+  <data name="SubmissionPlaceholder" xml:space="preserve">
+    <value>📤 Submitting choices (coming soon)</value>
+  </data>
+  <data name="ResolutionPlaceholder" xml:space="preserve">
+    <value>⏳ Resolving the round (coming soon)</value>
+  </data>
+  <data name="PressEnterToContinuePrompt" xml:space="preserve">
+    <value>Press Enter to continue...</value>
+  </data>
+  <data name="GameOverHeader" xml:space="preserve">
+    <value>🏁 Game over</value>
+  </data>
+  <data name="GameOverMessage" xml:space="preserve">
+    <value>Thanks for playing! (final scoring not implemented yet)</value>
+  </data>
+  <data name="PlayerSubmittedFormat" xml:space="preserve">
+    <value>📨 {0} submitted their decisions.</value>
+  </data>
+  <data name="WaitingForOtherPlayersMessage" xml:space="preserve">
+    <value>⌛ Waiting for the other players...</value>
+  </data>
+  <data name="CompanyAssignedFormat" xml:space="preserve">
+    <value>Your company : {0}</value>
+  </data>
+  <data name="MyCompanyHeaderFormat" xml:space="preserve">
+    <value>My Company : {0}</value>
+  </data>
+  <data name="TreasuryFormat" xml:space="preserve">
+    <value>Treasury : {0} €</value>
+  </data>
+  <data name="RevenueFormat" xml:space="preserve">
+    <value>Revenue : {0} €</value>
+  </data>
+  <data name="ConsultantLineFormat" xml:space="preserve">
+    <value>- {0} ({1})</value>
+  </data>
+  <data name="StatusFree" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="StatusOnMission" xml:space="preserve">
+    <value>On Mission</value>
+  </data>
+  <data name="StatusInTraining" xml:space="preserve">
+    <value>InTraining</value>
+  </data>
+  <data name="NoCompanyError" xml:space="preserve">
+    <value>No Company found</value>
+  </data>
+  <data name="ConsultantSkillsFormat" xml:space="preserve">
+    <value>Skills : {0}</value>
+  </data>
+  <data name="NoSkillsLabel" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="DecisionHeader" xml:space="preserve">
+    <value>Tender applications</value>
+  </data>
+  <data name="NoTendersMessage" xml:space="preserve">
+    <value>No tenders available this round.</value>
+  </data>
+  <data name="TenderLineFormat" xml:space="preserve">
+    <value>- {0} (budget {1} €)</value>
+  </data>
+  <data name="ApplyToTenderPrompt" xml:space="preserve">
+    <value>Which tender do you want to apply to? (exact name, or press Enter to skip)</value>
+  </data>
+  <data name="TenderNotFoundError" xml:space="preserve">
+    <value>Tender not found.</value>
+  </data>
+  <data name="NoFreeConsultantError" xml:space="preserve">
+    <value>No consultant available to apply.</value>
+  </data>
+  <data name="SelectConsultantsPrompt" xml:space="preserve">
+    <value>Which consultants should be assigned? (comma-separated names)</value>
+  </data>
+  <data name="NoConsultantSelectedError" xml:space="preserve">
+    <value>No consultant selected.</value>
+  </data>
+  <data name="ApplicationSubmittedMessage" xml:space="preserve">
+    <value>Application submitted.</value>
+  </data>
+  <data name="NoTrainingsMessage" xml:space="preserve">
+    <value>No trainings available this round.</value>
+  </data>
+  <data name="TrainingLineFormat" xml:space="preserve">
+    <value>- {0} ({1}, cost {2} €)</value>
+  </data>
+  <data name="EnrollInTrainingPrompt" xml:space="preserve">
+    <value>Which training do you want to enroll in? (exact name, or press Enter to skip)</value>
+  </data>
+  <data name="TrainingNotFoundError" xml:space="preserve">
+    <value>Training not found.</value>
+  </data>
+  <data name="SelectConsultantPrompt" xml:space="preserve">
+    <value>Which consultant should be enrolled? (exact name)</value>
+  </data>
+  <data name="EnrollmentSubmittedMessage" xml:space="preserve">
+    <value>Enrollment submitted.</value>
+  </data>
+  <data name="SubmissionHeader" xml:space="preserve">
+    <value>Review your decisions</value>
+  </data>
+  <data name="NoDecisionsMessage" xml:space="preserve">
+    <value>No decisions made this round.</value>
+  </data>
+  <data name="ConfirmSubmissionPrompt" xml:space="preserve">
+    <value>Press Enter to confirm and submit.</value>
+  </data>
+  <data name="TenderDecisionSummaryFormat" xml:space="preserve">
+    <value>Applied to {0} with {1} consultant(s)</value>
+  </data>
+  <data name="TrainingDecisionSummaryFormat" xml:space="preserve">
+    <value>Enrolled {0} in {1}</value>
+  </data>
+  <data name="SkillWithLevelFormat" xml:space="preserve">
+    <value> {0} ({1})</value>
+  </data>
+  <data name="MarketHeader" xml:space="preserve">
+    <value>Market</value>
+  </data>
+  <data name="TendersSectionHeader" xml:space="preserve">
+    <value>Tenders</value>
+  </data>
+  <data name="TrainingsSectionHeader" xml:space="preserve">
+    <value>Trainings</value>
+  </data>
+  <data name="TenderDetailFormat" xml:space="preserve">
+    <value>{0}. {1} - {2} € - {3} round(s) - {4} consultant(s)</value>
+  </data>
+  <data name="TenderRequiredSkillsFormat" xml:space="preserve">
+    <value>   Required: {0}</value>
+  </data>
+  <data name="TrainingDetailFormat" xml:space="preserve">
+    <value>{0}. {1} - {2} - {3} € - {4} round(s)</value>
+  </data>
 </root>
