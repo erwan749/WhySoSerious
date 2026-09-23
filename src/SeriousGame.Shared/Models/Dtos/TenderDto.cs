@@ -7,4 +7,5 @@ public class TenderDto
     public ICollection<RequiredSkillDto> RequiredSkills { get; init; } = [];
     public required int Budget { get; init; }
     public required int RoundsNumber { get; init; }
+    public required int RequiredConsultants { get; init; }
 }
