@@ -11,4 +11,11 @@ Une page par sujet, reliée par des liens plutôt que dupliquée :
 - **[client.md](client.md)** — structure du projet Client : state, services, conventions config/ressources.
 - **[known-gaps.md](known-gaps.md)** — bugs connus et failles de sécurité volontairement laissés de côté pour l'instant.
 
+Pages par fonctionnalité, dans l'ordre où elles ont été développées :
+
+- **[game-started.md](game-started.md)** — démarrage d'une partie depuis le lobby.
+- **[feature-1.md](feature-1.md)** — …
+- **[staff-inita.md](staff-inita.md)** — staff initial de consultants (US05).
+- **[catalogue-genere.md](catalogue-genere.md)** — catalogue généré du tour (US11).
+
 Pour les commandes build/run/test, voir le [README racine](../README.md).

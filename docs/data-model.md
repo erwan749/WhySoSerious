@@ -29,7 +29,7 @@ Le modèle couvre deux moments distincts, ce qui explique certaines cohabitation
 ### Catalogue d'un tour
 
 - **`Round`** — un tour de la partie : `Order`, `IsCompleted`, le `Game` parent, le catalogue proposé ce tour (`Tenders` + `Trainings`), et les décisions des entreprises (`Applications`).
-- **`Tender`** — **définition** d'un appel d'offres (immuable) : `Name`, `Skills` exigés, `Budget`, `RoundsNumber` (durée d'exécution). Ne porte aucun état d'attribution : le gagnant et l'avancement vivent sur `Contract`.
+- **`Tender`** — appel d'offres proposé pendant une partie : `Name`, `RequiredSkills` (compétence + niveau minimum), `RequiredConsultants` (main-d'œuvre à affecter), `Budget`, `RoundsNumber` (durée d'exécution). Généré au tirage du tour à partir du staff en jeu (voir [catalogue-genere.md](catalogue-genere.md)), et non saisi en référentiel : seuls les **noms** de projets sont des données (`TenderSeed`). Ne porte aucun état d'attribution : le gagnant et l'avancement vivent sur `Contract`.
 - **`Training`** — définition d'une formation : `Name`, `Skill` produite, `Cost`, `RoundsNumber` (durée).
 
 ### Décisions et exécution
@@ -109,7 +109,7 @@ Arêtes clés : `Company ──PlayerOwner──▶ Player` (jamais l'inverse) ;
 
 - **`Game → Company → Player`, jamais `Player → Company`.** `Player` est une identité lobby persistante ; `Company` est scoped à une partie. Le lien ne va que de `Company` vers son `PlayerOwner`, pour ne pas coupler l'identité durable à l'état d'une partie précise.
 - **« Une company par joueur » est un invariant de génération, pas un type.** `Game.Companies` est une collection : le serveur en crée une par joueur au démarrage, mais la structure autorise déjà le multi-company sans migration si une extension future le veut.
-- **`Tender` immuable, `Contract` porte l'exécution.** La définition de l'appel d'offres est séparée de son instance remportée : gagnant, statut et avancement vivent sur `Contract`, jamais sur `Tender`.
+- **`Tender` figé après tirage, `Contract` porte l'exécution.** L'appel d'offres est construit au tirage du tour puis ne change plus ; gagnant, statut et avancement vivent sur `Contract`, jamais sur `Tender`.
 - **« Consultant occupé » est dérivé.** Pas de flag stocké : l'occupation se calcule depuis les `Contracts` actifs et `TrainingEnrollments` en cours, pour éviter toute désynchronisation.
 - **`Round` = décisions du tour ; `Company` = état persistant entre tours.** Les candidatures éphémères vivent sur le `Round` ; les contrats et formations qui s'étalent sur plusieurs tours vivent sur la `Company`.
 

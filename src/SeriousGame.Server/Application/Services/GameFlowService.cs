@@ -244,20 +244,11 @@ public class GameFlowService : IGameFlowService
 
         await StartRound(game, nextRound);
     }
+    /// <summary>
+    /// delegue la construction du catalogue a RoundFactory
+    /// </summary>
 
-    // TODO US11 : le catalogue du tour (appels d'offres, formations) sera généré par RoundFactory.
-    private static Round CreateRound(Game game)
-    {
-        var round = new Round
-        {
-            Game = game,
-            Order = game.Rounds.Count + 1
-        };
-
-        game.Rounds.Add(round);
-
-        return round;
-    }
+    private Round CreateRound(Game game) => RoundFactory.Create(game, _appMemory.TenderSeeds, _gameOptions, Random.Shared);
 
     private Task StartRound(Game game, Round round)
     {
