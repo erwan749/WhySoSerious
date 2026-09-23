@@ -26,6 +26,7 @@ GameFlowService.StartGame
                  ├─▶ Distribution round-robin (3 par entreprise)
                  └─▶ Pour chaque carte : CreateFromSeed → nouveau Consultant + nouvelles ConsultantSkill
                           (jamais les instances du seed : elles sont mutables via LevelUp)
+                          + niveau initial : 1 ou 2 LevelUp par compétence
 ```
 
 ## Fichiers modifiés
@@ -42,9 +43,11 @@ GameFlowService.StartGame
 
 - **3 consultants par entreprise, 24 cartes au total** — dimensionné pour tomber juste avec
   `MaximumPlayers` (8 × 3 = 24), sans cas limite à gérer pour une partie complète.
-- **Niveau de départ toujours `Level.Zero`** — la variété porte sur *quelles* compétences sont
-  possédées, pas sur leur niveau ; `ConsultantSkill.Level` ne progresse que via `LevelUp()`, le fixer
-  arbitrairement dans le seed aurait été artificiel.
+- **Niveau de départ tiré entre `Basic` et `Intermediate`** — un consultant qui arrive dans une
+  entreprise a déjà de l'expérience. Surtout, à `Level.Zero` aucun appel d'offres exigeant un niveau
+  réel n'était réalisable avant deux formations, ce qui vidait les premiers tours de leur intérêt.
+  Le niveau est atteint en appelant `LevelUp()` une ou deux fois, jamais en forçant la propriété :
+  `ConsultantSkill.Level` reste en `private set`, un niveau se gagne et ne se décrète pas.
 - **`Random` injecté en paramètre plutôt qu'instancié dans la méthode** — rend `AssignInitialStaff`
   testable de façon déterministe (`new Random(42)` dans les tests).
 - **Nouvelle instance de `ConsultantSkill` à chaque `CreateFromSeed`, jamais celle du seed** — évite de

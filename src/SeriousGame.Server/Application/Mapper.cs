@@ -85,7 +85,8 @@ public static class Mapper
         Name = tender.Name,
         RequiredSkills = tender.RequiredSkills.Select(ToDto).ToList(),
         Budget = tender.Budget,
-        RoundsNumber = tender.RoundsNumber
+        RoundsNumber = tender.RoundsNumber,
+        RequiredConsultants = tender.RequiredConsultants
     };
 
     private static SkillLevel ToDto(Level level) => level switch

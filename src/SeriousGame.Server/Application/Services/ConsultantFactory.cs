@@ -14,6 +14,9 @@ public static class ConsultantFactory
     private const int MaxSalaryStep = 50; // ×100 → 5 000
     private const int MinSkillsPerConsultant = 1;
     private const int MaxSkillsPerConsultant = 2;
+    private const int MinLevelUpOnStart = 1;
+    private const int MaxLevelUpOnStart = 2;
+
 
     public static void AssignInitialStaff(
         IReadOnlyList<Company> companies,
@@ -54,7 +57,14 @@ public static class ConsultantFactory
 
         foreach (var skill in randomSkills)
         {
-            consultant.Skills.Add(new ConsultantSkill { Skill = skill });
+            var cSkill = new ConsultantSkill { Skill = skill };
+            var randomLevel = random.Next(MinLevelUpOnStart, MaxLevelUpOnStart + 1);
+            for (var i = 0; i < randomLevel; i++)
+            {
+                cSkill.LevelUp();
+            }
+            consultant.Skills.Add(cSkill);
+
         }
 
         return consultant;
