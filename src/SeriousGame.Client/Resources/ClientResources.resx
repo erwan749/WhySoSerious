@@ -210,4 +210,64 @@ Games available:
     <data name="NoSkillsLabel" xml:space="preserve">
         <value>None</value>
     </data>
+    <data name="DecisionHeader" xml:space="preserve">
+        <value>Tender applications</value>
+    </data>
+    <data name="NoTendersMessage" xml:space="preserve">
+        <value>No tenders available this round.</value>
+    </data>
+    <data name="TenderLineFormat" xml:space="preserve">
+        <value>- {0} (budget {1} €)</value>
+    </data>
+    <data name="ApplyToTenderPrompt" xml:space="preserve">
+        <value>Which tender do you want to apply to? (exact name, or press Enter to skip)</value>
+    </data>
+    <data name="TenderNotFoundError" xml:space="preserve">
+        <value>Tender not found.</value>
+    </data>
+    <data name="NoFreeConsultantError" xml:space="preserve">
+        <value>No consultant available to apply.</value>
+    </data>
+    <data name="SelectConsultantsPrompt" xml:space="preserve">
+        <value>Which consultants should be assigned? (comma-separated names)</value>
+    </data>
+    <data name="NoConsultantSelectedError" xml:space="preserve">
+        <value>No consultant selected.</value>
+    </data>
+    <data name="ApplicationSubmittedMessage" xml:space="preserve">
+        <value>Application submitted.</value>
+    </data>
+    <data name="NoTrainingsMessage" xml:space="preserve">
+        <value>No trainings available this round.</value>
+    </data>
+    <data name="TrainingLineFormat" xml:space="preserve">
+        <value>- {0} ({1}, cost {2} €)</value>
+    </data>
+    <data name="EnrollInTrainingPrompt" xml:space="preserve">
+        <value>Which training do you want to enroll in? (exact name, or press Enter to skip)</value>
+    </data>
+    <data name="TrainingNotFoundError" xml:space="preserve">
+        <value>Training not found.</value>
+    </data>
+    <data name="SelectConsultantPrompt" xml:space="preserve">
+        <value>Which consultant should be enrolled? (exact name)</value>
+    </data>
+    <data name="EnrollmentSubmittedMessage" xml:space="preserve">
+        <value>Enrollment submitted.</value>
+    </data>
+    <data name="SubmissionHeader" xml:space="preserve">
+        <value>Review your decisions</value>
+    </data>
+    <data name="NoDecisionsMessage" xml:space="preserve">
+        <value>No decisions made this round.</value>
+    </data>
+    <data name="ConfirmSubmissionPrompt" xml:space="preserve">
+        <value>Press Enter to confirm and submit.</value>
+    </data>
+    <data name="TenderDecisionSummaryFormat" xml:space="preserve">
+        <value>Applied to {0} with {1} consultant(s)</value>
+    </data>
+    <data name="TrainingDecisionSummaryFormat" xml:space="preserve">
+        <value>Enrolled {0} in {1}</value>
+    </data>
 </root>

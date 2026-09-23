@@ -16,6 +16,7 @@ public class GameLoop
 {
     private readonly ClientSession _session;
     private readonly IGameServices _gameServices;
+    private readonly List<string> _roundDecisions = [];
 
     // Complété par le handler GameEnded : c'est ce qui fait sortir RunAsync.
     private readonly TaskCompletionSource _gameEndedSignal =
@@ -91,16 +92,180 @@ public class GameLoop
     {
         ConsoleUI.WriteHeader(string.Format(ClientResources.RoundHeaderFormat, round.Order, round.TotalRounds));
 
-        // TODO US12 / US07-US09 : écrans réels du marché et collecte des décisions.
+        _roundDecisions.Clear();
+
+        // TODO US12 : écran réel du marché.
         RenderPhase(TurnPhase.MarketAnalysis);
         ShowMyCompanyScreen();
-        RenderPhase(TurnPhase.Decision);
+        await RunDecisionPhaseAsync(round);
 
-        ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Submission));
-        await _gameServices.SubmitDecisionsAsync();
+        await RunSubmissionPhaseAsync();
 
         ConsoleUI.WriteInfo(ClientResources.WaitingForOtherPlayersMessage);
     }
+    
+    private async Task RunSubmissionPhaseAsync()
+    {
+        ConsoleUI.WriteHeader(ClientResources.SubmissionHeader);
+
+        if (_roundDecisions.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoDecisionsMessage);
+        }
+        else
+        {
+            foreach (var decision in _roundDecisions)
+            {
+                ConsoleUI.WriteInfo($"- {decision}");
+            }
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.ConfirmSubmissionPrompt);
+        Console.ReadLine();
+
+        await _gameServices.SubmitDecisionsAsync();
+    }
+    
+    private async Task RunDecisionPhaseAsync(RoundDto round)
+{
+    ConsoleUI.WriteHeader(ClientResources.DecisionHeader);
+
+    await RunTenderApplicationStepAsync(round);
+    await RunTrainingEnrollmentStepAsync(round);
+}
+
+    private async Task RunTenderApplicationStepAsync(RoundDto round)
+    {
+        if (round.Tenders.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoTendersMessage);
+            return;
+        }
+
+        foreach (var availableTender in round.Tenders)
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.TenderLineFormat, availableTender.Name, availableTender.Budget));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.ApplyToTenderPrompt);
+        var tenderName = ConsoleUI.ReadPrompt();
+
+        if (tenderName is null) return;
+
+        var tender = round.Tenders.FirstOrDefault(t => t.Name.Equals(tenderName, StringComparison.OrdinalIgnoreCase));
+
+        if (tender is null)
+        {
+            ConsoleUI.WriteError(ClientResources.TenderNotFoundError);
+            return;
+        }
+
+        var freeConsultants = GetFreeConsultants();
+
+        if (freeConsultants.Count == 0)
+        {
+            ConsoleUI.WriteError(ClientResources.NoFreeConsultantError);
+            return;
+        }
+
+        foreach (var consultant in freeConsultants)
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, consultant.FullName, ClientResources.StatusFree));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.SelectConsultantsPrompt);
+        var input = ConsoleUI.ReadPrompt() ?? "";
+        var selectedNames = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        var selectedIds = freeConsultants
+            .Where(c => selectedNames.Any(n => n.Equals(c.FullName, StringComparison.OrdinalIgnoreCase)))
+            .Select(c => c.Id)
+            .ToList();
+
+        if (selectedIds.Count == 0)
+        {
+            ConsoleUI.WriteError(ClientResources.NoConsultantSelectedError);
+            return;
+        }
+
+        var error = await _gameServices.ApplyToTenderAsync(tender.Id, selectedIds);
+
+        if (error is null)
+        {
+            ConsoleUI.WriteInfo(ClientResources.ApplicationSubmittedMessage);
+            _roundDecisions.Add(string.Format(ClientResources.TenderDecisionSummaryFormat, tender.Name, selectedIds.Count));
+        }
+        else
+        {
+            ConsoleUI.WriteError(error);
+        }
+    }
+
+    private async Task RunTrainingEnrollmentStepAsync(RoundDto round)
+    {
+        if (round.Trainings.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoTrainingsMessage);
+            return;
+        }
+
+        foreach (var availableTraining in round.Trainings)
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.TrainingLineFormat, availableTraining.Name, availableTraining.Skill.Name, availableTraining.Cost));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.EnrollInTrainingPrompt);
+        var trainingName = ConsoleUI.ReadPrompt();
+
+        if (trainingName is null) return;
+
+        var training = round.Trainings.FirstOrDefault(t => t.Name.Equals(trainingName, StringComparison.OrdinalIgnoreCase));
+
+        if (training is null)
+        {
+            ConsoleUI.WriteError(ClientResources.TrainingNotFoundError);
+            return;
+        }
+
+        var freeConsultants = GetFreeConsultants();
+
+        if (freeConsultants.Count == 0)
+        {
+            ConsoleUI.WriteError(ClientResources.NoFreeConsultantError);
+            return;
+        }
+
+        foreach (var freeConsultant in freeConsultants)
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, freeConsultant.FullName, ClientResources.StatusFree));
+        }
+
+        ConsoleUI.WritePrompt(ClientResources.SelectConsultantPrompt);
+        var consultantName = ConsoleUI.ReadPrompt();
+
+        var consultant = freeConsultants.FirstOrDefault(c => c.FullName.Equals(consultantName, StringComparison.OrdinalIgnoreCase));
+
+        if (consultant is null)
+        {
+            ConsoleUI.WriteError(ClientResources.NoConsultantSelectedError);
+            return;
+        }
+
+        var error = await _gameServices.EnrollInTrainingAsync(training.Id, consultant.Id);
+
+        if (error is null)
+        {
+            ConsoleUI.WriteInfo(ClientResources.EnrollmentSubmittedMessage);
+            _roundDecisions.Add(string.Format(ClientResources.TrainingDecisionSummaryFormat, consultant.FullName, training.Name));
+        }
+        else
+        {
+            ConsoleUI.WriteError(error);
+        }
+    }
+
+    private List<ConsultantDto> GetFreeConsultants() =>
+        _session.MyCompany?.Staff.Where(c => c.Status == ConsultantStatus.Free).ToList() ?? [];
 
     private static void OnPlayerSubmitted(string nickname)
     {
@@ -133,8 +298,6 @@ public class GameLoop
     {
         TurnPhase.MarketAnalysis => ClientResources.MarketAnalysisPlaceholder,
         TurnPhase.Simulation => ClientResources.SimulationPlaceholder,
-        TurnPhase.Decision => ClientResources.DecisionPlaceholder,
-        TurnPhase.Submission => ClientResources.SubmissionPlaceholder,
         TurnPhase.Resolution => ClientResources.ResolutionPlaceholder,
         _ => throw new ArgumentOutOfRangeException(nameof(phase))
     };

@@ -8,6 +8,7 @@ using Shared;
 using Shared.Abstractions;
 using Shared.Models.Dtos;
 using Shared.Models.Requests;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Client.Services;
 
@@ -79,6 +80,60 @@ public class GameServices : IGameServices
             RoundId = _currentRoundId
         };
         await _gameConnection.InvokeAsync(nameof(IGameHubServer.SubmitDecisions), command);
+    }
+    
+    public async Task<string?> ApplyToTenderAsync(string tenderId, ICollection<string> consultantIds)
+    {
+        if (_currentRoundId is null)
+        {
+            _logger.LogWarning("Aucun tour en cours, candidature ignorée");
+            return "Aucun tour en cours.";
+        }
+
+        var command = new ApplyToTenderCommand
+        {
+            PlayerId = _clientSession.PlayerId,
+            RoundId = _currentRoundId,
+            TenderId = tenderId,
+            ConsultantIds = consultantIds
+        };
+
+        try
+        {
+            await _gameConnection.InvokeAsync(nameof(IGameHubServer.ApplyToTender), command);
+            return null;
+        }
+        catch (HubException ex)
+        {
+            return ex.Message;
+        }
+    }
+    
+    public async Task<string?> EnrollInTrainingAsync(string trainingId, string consultantId)
+    {
+        if (_currentRoundId is null)
+        {
+            _logger.LogWarning("Aucun tour en cours, inscription ignorée");
+            return "Aucun tour en cours.";
+        }
+
+        var command = new EnrollInTrainingCommand
+        {
+            PlayerId = _clientSession.PlayerId,
+            RoundId = _currentRoundId,
+            TrainingId = trainingId,
+            ConsultantId = consultantId
+        };
+
+        try
+        {
+            await _gameConnection.InvokeAsync(nameof(IGameHubServer.EnrollInTraining), command);
+            return null;
+        }
+        catch (HubException ex)
+        {
+            return ex.Message;
+        }
     }
 
     private void RegisterHandlers()

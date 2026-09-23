@@ -410,5 +410,125 @@ namespace Client.Resources {
                 return ResourceManager.GetString("NoSkillsLabel", resourceCulture);
             }
         }
+        
+        internal static string DecisionHeader {
+            get {
+                return ResourceManager.GetString("DecisionHeader", resourceCulture);
+            }
+        }
+        
+        internal static string NoTendersMessage {
+            get {
+                return ResourceManager.GetString("NoTendersMessage", resourceCulture);
+            }
+        }
+        
+        internal static string TenderLineFormat {
+            get {
+                return ResourceManager.GetString("TenderLineFormat", resourceCulture);
+            }
+        }
+        
+        internal static string ApplyToTenderPrompt {
+            get {
+                return ResourceManager.GetString("ApplyToTenderPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string TenderNotFoundError {
+            get {
+                return ResourceManager.GetString("TenderNotFoundError", resourceCulture);
+            }
+        }
+        
+        internal static string NoFreeConsultantError {
+            get {
+                return ResourceManager.GetString("NoFreeConsultantError", resourceCulture);
+            }
+        }
+        
+        internal static string SelectConsultantsPrompt {
+            get {
+                return ResourceManager.GetString("SelectConsultantsPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string NoConsultantSelectedError {
+            get {
+                return ResourceManager.GetString("NoConsultantSelectedError", resourceCulture);
+            }
+        }
+        
+        internal static string ApplicationSubmittedMessage {
+            get {
+                return ResourceManager.GetString("ApplicationSubmittedMessage", resourceCulture);
+            }
+        }
+        
+        internal static string NoTrainingsMessage {
+            get {
+                return ResourceManager.GetString("NoTrainingsMessage", resourceCulture);
+            }
+        }
+        
+        internal static string TrainingLineFormat {
+            get {
+                return ResourceManager.GetString("TrainingLineFormat", resourceCulture);
+            }
+        }
+        
+        internal static string EnrollInTrainingPrompt {
+            get {
+                return ResourceManager.GetString("EnrollInTrainingPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string TrainingNotFoundError {
+            get {
+                return ResourceManager.GetString("TrainingNotFoundError", resourceCulture);
+            }
+        }
+        
+        internal static string SelectConsultantPrompt {
+            get {
+                return ResourceManager.GetString("SelectConsultantPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string EnrollmentSubmittedMessage {
+            get {
+                return ResourceManager.GetString("EnrollmentSubmittedMessage", resourceCulture);
+            }
+        }
+        
+        internal static string SubmissionHeader {
+            get {
+                return ResourceManager.GetString("SubmissionHeader", resourceCulture);
+            }
+        }
+        
+        internal static string NoDecisionsMessage {
+            get {
+                return ResourceManager.GetString("NoDecisionsMessage", resourceCulture);
+            }
+        }
+        
+        internal static string ConfirmSubmissionPrompt {
+            get {
+                return ResourceManager.GetString("ConfirmSubmissionPrompt", resourceCulture);
+            }
+        }
+        
+        internal static string TenderDecisionSummaryFormat {
+            get {
+                return ResourceManager.GetString("TenderDecisionSummaryFormat", resourceCulture);
+            }
+        }
+        
+        internal static string TrainingDecisionSummaryFormat {
+            get {
+                return ResourceManager.GetString("TrainingDecisionSummaryFormat", resourceCulture);
+            }
+        }
     }
 }
