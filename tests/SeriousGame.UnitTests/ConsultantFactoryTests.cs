@@ -80,7 +80,7 @@ public class ConsultantFactoryTests
         ConsultantFactory.AssignInitialStaff(companies, seeds, SkillCatalog, new Random(1));
 
         Assert.All(companies, company =>
-            Assert.Equal(ConsultantFactory.ConsultantsPerCompany, company.Staff.Count));
+            Assert.Equal(ConsultantFactory.ConsultantsPerCompany, company.Staffs.Count));
     }
 
     [Fact]

@@ -37,7 +37,7 @@ public static class ConsultantFactory
         for (var i = 0; i < requiredCount; i++)
         {
             var company = companies[i % companies.Count];
-            company.Staff.Add(CreateFromSeed(shuffledSeeds[i], skillCatalog, company, random));
+            company.Staffs.Add(CreateFromSeed(shuffledSeeds[i], skillCatalog, company, random));
         }
     }
 

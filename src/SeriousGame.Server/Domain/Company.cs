@@ -1,4 +1,7 @@
 using Server.Domain.Base;
+using Server.Domain.Enums;
+using Shared.Models.Dtos;
+using System.Collections.ObjectModel;
 
 namespace Server.Domain;
 
@@ -8,7 +11,7 @@ public class Company : BaseModel
     public required Player PlayerOwner { get; set; }
     public int Treasury { get; private set; }
     public int Revenue { get; private set; }
-    public ICollection<Consultant> Staff { get; } = [];
+    public ICollection<Consultant> Staffs { get; } = [];
 
     /// <summary>Trésorerie de départ, fixée une seule fois à la création de l'entreprise.</summary>
     public required int InitialTreasury
@@ -44,4 +47,17 @@ public class Company : BaseModel
         if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount), "Le montant retiré ne peut pas être négatif.");
         Treasury -= amount;
     }
+
+    /// <summary>
+    /// Indique si ce consultant est immobilisé : affecté à un contrat encore actif, ou inscrit à une
+    /// formation en cours. Un consultant occupé ne peut ni candidater ni partir en formation.
+    /// </summary>
+    public bool IsConsultantBusy(Consultant consultant) =>
+        Contracts.Any(c => c.Status == ContractStatus.Active && c.AssignedConsultants.Contains(consultant))
+        || TrainingEnrollments.Any(e => e.Status == EnrollmentStatus.InProgress && e.Consultant == consultant);
+
+    /// <summary>Consultants du staff mobilisables ce tour : ni en mission, ni en formation.</summary>
+    public IReadOnlyList<Consultant> GetAvailableConsultants() =>
+        Staffs.Where(consultant => !IsConsultantBusy(consultant)).ToList();
+
 }

@@ -54,7 +54,7 @@ public class GameFlowService : IGameFlowService
 
         lock (game)
         {
-            var consultants = company.Staff.Where(c => command.ConsultantIds.Contains(c.Id)).ToList();
+            var consultants = company.Staffs.Where(c => command.ConsultantIds.Contains(c.Id)).ToList();
 
             if (consultants.Count != command.ConsultantIds.Count)
             {
@@ -86,7 +86,7 @@ public class GameFlowService : IGameFlowService
         var round = game?.Rounds.FirstOrDefault(r => r.Id == command.RoundId);
         var company = game?.Companies.FirstOrDefault(c => c.PlayerOwner.Id == command.PlayerId);
         var training = round?.Trainings.FirstOrDefault(t => t.Id == command.TrainingId);
-        var consultant = company?.Staff.FirstOrDefault(c => c.Id == command.ConsultantId);
+        var consultant = company?.Staffs.FirstOrDefault(c => c.Id == command.ConsultantId);
 
         if (game is null || round is null || company is null || training is null || consultant is null)
         {
