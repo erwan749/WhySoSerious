@@ -319,16 +319,13 @@ Games available:
     <value>- {0} (budget {1} €)</value>
   </data>
   <data name="ApplyToTenderPrompt" xml:space="preserve">
-    <value>Which tender do you want to apply to? (exact name, or press Enter to skip)</value>
-  </data>
-  <data name="TenderNotFoundError" xml:space="preserve">
-    <value>Tender not found.</value>
+    <value>Which tender do you want to apply to? (number, or press Enter to skip)</value>
   </data>
   <data name="NoFreeConsultantError" xml:space="preserve">
     <value>No consultant available to apply.</value>
   </data>
   <data name="SelectConsultantsPrompt" xml:space="preserve">
-    <value>Which consultants should be assigned? (comma-separated names)</value>
+    <value>Which consultants should be assigned? (comma-separated numbers)</value>
   </data>
   <data name="NoConsultantSelectedError" xml:space="preserve">
     <value>No consultant selected.</value>
@@ -339,17 +336,11 @@ Games available:
   <data name="NoTrainingsMessage" xml:space="preserve">
     <value>No trainings available this round.</value>
   </data>
-  <data name="TrainingLineFormat" xml:space="preserve">
-    <value>- {0} ({1}, cost {2} €)</value>
-  </data>
   <data name="EnrollInTrainingPrompt" xml:space="preserve">
-    <value>Which training do you want to enroll in? (exact name, or press Enter to skip)</value>
-  </data>
-  <data name="TrainingNotFoundError" xml:space="preserve">
-    <value>Training not found.</value>
+    <value>Which training do you want to enroll in? (number, or press Enter to skip)</value>
   </data>
   <data name="SelectConsultantPrompt" xml:space="preserve">
-    <value>Which consultant should be enrolled? (exact name)</value>
+    <value>Which consultant should be enrolled? (number)</value>
   </data>
   <data name="EnrollmentSubmittedMessage" xml:space="preserve">
     <value>Enrollment submitted.</value>
@@ -389,5 +380,11 @@ Games available:
   </data>
   <data name="TrainingDetailFormat" xml:space="preserve">
     <value>{0}. {1} - {2} - {3} € - {4} round(s)</value>
+  </data>
+  <data name="InvalidNumberError" xml:space="preserve">
+    <value>Invalid number.</value>
+  </data>
+  <data name="NumberedConsultantLineFormat" xml:space="preserve">
+    <value>{0}. {1} ({2})</value>
   </data>
 </root>

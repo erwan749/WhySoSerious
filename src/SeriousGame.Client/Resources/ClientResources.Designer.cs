@@ -70,7 +70,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Which tender do you want to apply to? (exact name, or press Enter to skip).
+        ///   Recherche une chaîne localisée semblable à Which tender do you want to apply to? (number, or press Enter to skip).
         /// </summary>
         internal static string ApplyToTenderPrompt {
             get {
@@ -214,7 +214,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Which training do you want to enroll in? (exact name, or press Enter to skip).
+        ///   Recherche une chaîne localisée semblable à Which training do you want to enroll in? (number, or press Enter to skip).
         /// </summary>
         internal static string EnrollInTrainingPrompt {
             get {
@@ -352,6 +352,15 @@ namespace Client.Resources {
         internal static string InvalidChoiceMessage {
             get {
                 return ResourceManager.GetString("InvalidChoiceMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Invalid number..
+        /// </summary>
+        internal static string InvalidNumberError {
+            get {
+                return ResourceManager.GetString("InvalidNumberError", resourceCulture);
             }
         }
         
@@ -527,6 +536,15 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0}. {1} ({2}).
+        /// </summary>
+        internal static string NumberedConsultantLineFormat {
+            get {
+                return ResourceManager.GetString("NumberedConsultantLineFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à 📨 {0} submitted their decisions..
         /// </summary>
         internal static string PlayerSubmittedFormat {
@@ -609,7 +627,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Which consultant should be enrolled? (exact name).
+        ///   Recherche une chaîne localisée semblable à Which consultant should be enrolled? (number).
         /// </summary>
         internal static string SelectConsultantPrompt {
             get {
@@ -618,7 +636,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Which consultants should be assigned? (comma-separated names).
+        ///   Recherche une chaîne localisée semblable à Which consultants should be assigned? (comma-separated numbers).
         /// </summary>
         internal static string SelectConsultantsPrompt {
             get {
@@ -726,15 +744,6 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Tender not found..
-        /// </summary>
-        internal static string TenderNotFoundError {
-            get {
-                return ResourceManager.GetString("TenderNotFoundError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à    Required: {0}.
         /// </summary>
         internal static string TenderRequiredSkillsFormat {
@@ -767,24 +776,6 @@ namespace Client.Resources {
         internal static string TrainingDetailFormat {
             get {
                 return ResourceManager.GetString("TrainingDetailFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à - {0} ({1}, cost {2} €).
-        /// </summary>
-        internal static string TrainingLineFormat {
-            get {
-                return ResourceManager.GetString("TrainingLineFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Training not found..
-        /// </summary>
-        internal static string TrainingNotFoundError {
-            get {
-                return ResourceManager.GetString("TrainingNotFoundError", resourceCulture);
             }
         }
         
