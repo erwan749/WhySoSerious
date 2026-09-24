@@ -34,10 +34,12 @@ jobs:
         run: dotnet test SeriousGame.slnx -c Release --no-restore
 
       # ---------- SERVER ----------
-      - name: Publish Server
+      - name: Publish Server (exe unique)
         run: >
           dotnet publish ${{ env.SERVER_PROJECT }}
           -c Release -r win-x64 --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
           -p:Version=${{ env.VERSION }}
           -o artifacts/server
 
@@ -65,6 +67,7 @@ jobs:
       - name: Package Client
         shell: pwsh
         run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
           Copy-Item artifacts/client/SeriousGame.Client.exe "dist/SeriousGame.Client-${env:VERSION}.exe"
           Compress-Archive -Path artifacts/client/* -DestinationPath "dist/SeriousGame.Client-${env:VERSION}-win-x64.zip"
 
