@@ -40,6 +40,8 @@ public class GameService
         game.Players.Add(player);
         return true;
     }
+    
+    public void EndGame(Game game) => _gameRepository.Remove(game);
 
     //public bool DisconnectPlayer(string gameId, Player player)
     //{
