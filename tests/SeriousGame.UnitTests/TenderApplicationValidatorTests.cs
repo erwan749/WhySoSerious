@@ -9,7 +9,7 @@ public class TenderApplicationValidatorTests
     private static Player MakePlayer() => new() { Id = Guid.NewGuid().ToString(), Nickname = "Ada", ConnectionId = "c" };
     private static Company MakeCompany() => new() { Name = "Acme", PlayerOwner = MakePlayer(), InitialTreasury = 1000 };
     private static Consultant MakeConsultant(Company company) => new() { Firstname = "Bob", Lastname = "Test", Company = company };
-    private static Tender MakeTender() => new() { Name = "Refonte", Budget = 1000, RoundsNumber = 1 };
+    private static Tender MakeTender() => new() { Name = "Refonte", Budget = 1000, RoundsNumber = 1, RequiredConsultants = 1 };
     private static Game MakeGame() => new() { Name = "G", Owner = MakePlayer() };
 
     private static Round MakeRound(params Tender[] tenders)

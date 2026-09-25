@@ -50,7 +50,7 @@ public class TrainingEnrollmentValidatorTests
         var consultant = MakeConsultant(company);
         var training = MakeTraining();
         var round = MakeRound(training);
-        var tender = new Tender { Name = "AO", Budget = 1000, RoundsNumber = 1 };
+        var tender = new Tender { Name = "AO", Budget = 1000, RoundsNumber = 1, RequiredConsultants = 1 };
 
         round.Applications.Add(new TenderApplication
         {

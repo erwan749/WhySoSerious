@@ -49,6 +49,8 @@ public static class Mapper
     private static ConsultantStatus ResolveStatus(Consultant consultant)
     {
         var company = consultant.Company;
+        
+        if (!company.IsConsultantBusy(consultant)) return ConsultantStatus.Free;
 
         if (company.Contracts.Any(c => c.Status == ContractStatus.Active && c.AssignedConsultants.Contains(consultant)))
         {
@@ -70,7 +72,7 @@ public static class Mapper
         OwnerId = company.PlayerOwner.Id,
         Treasury = company.Treasury,
         Revenue = company.Revenue,
-        Staff = company.Staff.Select(ToDto).ToList()
+        Staff = company.Staffs.Select(ToDto).ToList()
     };
 
     public static RequiredSkillDto ToDto(RequiredSkill requiredSkill) => new()

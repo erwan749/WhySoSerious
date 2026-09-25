@@ -3,6 +3,7 @@ using Client.Services.Interfaces;
 using Client.State;
 using Client.UI;
 using Shared.Models.Dtos;
+using System.Reflection;
 
 namespace Client.Game;
 
@@ -94,9 +95,8 @@ public class GameLoop
 
         _roundDecisions.Clear();
 
-        // TODO US12 : écran réel du marché.
-        RenderPhase(TurnPhase.MarketAnalysis);
         ShowMyCompanyScreen();
+        ShowMarketScreen(round);
         await RunDecisionPhaseAsync(round);
 
         await RunSubmissionPhaseAsync();
@@ -142,23 +142,13 @@ public class GameLoop
             return;
         }
 
-        foreach (var availableTender in round.Tenders)
-        {
-            ConsoleUI.WriteInfo(string.Format(ClientResources.TenderLineFormat, availableTender.Name, availableTender.Budget));
-        }
+        // Déjà listés et numérotés par l'écran marché : on demande directement le numéro.
+        var tenders = round.Tenders.ToList();
 
-        ConsoleUI.WritePrompt(ClientResources.ApplyToTenderPrompt);
-        var tenderName = ConsoleUI.ReadPrompt();
+        var tenderIndex = ReadIndex(ClientResources.ApplyToTenderPrompt, tenders.Count);
+        if (tenderIndex is null) return;
 
-        if (tenderName is null) return;
-
-        var tender = round.Tenders.FirstOrDefault(t => t.Name.Equals(tenderName, StringComparison.OrdinalIgnoreCase));
-
-        if (tender is null)
-        {
-            ConsoleUI.WriteError(ClientResources.TenderNotFoundError);
-            return;
-        }
+        var tender = tenders[tenderIndex.Value];
 
         var freeConsultants = GetFreeConsultants();
 
@@ -168,25 +158,24 @@ public class GameLoop
             return;
         }
 
-        foreach (var consultant in freeConsultants)
+        for (var i = 0; i < freeConsultants.Count; i++)
         {
-            ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, consultant.FullName, ClientResources.StatusFree));
+            ConsoleUI.WriteInfo(string.Format(
+                ClientResources.NumberedConsultantLineFormat,
+                i + 1,
+                freeConsultants[i].FullName,
+                ClientResources.StatusFree));
         }
 
-        ConsoleUI.WritePrompt(ClientResources.SelectConsultantsPrompt);
-        var input = ConsoleUI.ReadPrompt() ?? "";
-        var selectedNames = input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var consultantIndexes = ReadIndexes(ClientResources.SelectConsultantsPrompt, freeConsultants.Count);
 
-        var selectedIds = freeConsultants
-            .Where(c => selectedNames.Any(n => n.Equals(c.FullName, StringComparison.OrdinalIgnoreCase)))
-            .Select(c => c.Id)
-            .ToList();
-
-        if (selectedIds.Count == 0)
+        if (consultantIndexes.Count == 0)
         {
             ConsoleUI.WriteError(ClientResources.NoConsultantSelectedError);
             return;
         }
+
+        var selectedIds = consultantIndexes.Select(index => freeConsultants[index].Id).ToList();
 
         var error = await _gameServices.ApplyToTenderAsync(tender.Id, selectedIds);
 
@@ -209,23 +198,24 @@ public class GameLoop
             return;
         }
 
-        foreach (var availableTraining in round.Trainings)
+        var trainings = round.Trainings.ToList();
+
+        // TODO US25 : à retirer quand l'écran marché listera les formations générées.
+        for (var i = 0; i < trainings.Count; i++)
         {
-            ConsoleUI.WriteInfo(string.Format(ClientResources.TrainingLineFormat, availableTraining.Name, availableTraining.Skill.Name, availableTraining.Cost));
+            ConsoleUI.WriteInfo(string.Format(
+                ClientResources.TrainingDetailFormat,
+                i + 1,
+                trainings[i].Name,
+                trainings[i].Skill.Name,
+                trainings[i].Cost,
+                trainings[i].RoundsNumber));
         }
 
-        ConsoleUI.WritePrompt(ClientResources.EnrollInTrainingPrompt);
-        var trainingName = ConsoleUI.ReadPrompt();
+        var trainingIndex = ReadIndex(ClientResources.EnrollInTrainingPrompt, trainings.Count);
+        if (trainingIndex is null) return;
 
-        if (trainingName is null) return;
-
-        var training = round.Trainings.FirstOrDefault(t => t.Name.Equals(trainingName, StringComparison.OrdinalIgnoreCase));
-
-        if (training is null)
-        {
-            ConsoleUI.WriteError(ClientResources.TrainingNotFoundError);
-            return;
-        }
+        var training = trainings[trainingIndex.Value];
 
         var freeConsultants = GetFreeConsultants();
 
@@ -235,21 +225,24 @@ public class GameLoop
             return;
         }
 
-        foreach (var freeConsultant in freeConsultants)
+        for (var i = 0; i < freeConsultants.Count; i++)
         {
-            ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, freeConsultant.FullName, ClientResources.StatusFree));
+            ConsoleUI.WriteInfo(string.Format(
+                ClientResources.NumberedConsultantLineFormat,
+                i + 1,
+                freeConsultants[i].FullName,
+                ClientResources.StatusFree));
         }
 
-        ConsoleUI.WritePrompt(ClientResources.SelectConsultantPrompt);
-        var consultantName = ConsoleUI.ReadPrompt();
+        var consultantIndex = ReadIndex(ClientResources.SelectConsultantPrompt, freeConsultants.Count);
 
-        var consultant = freeConsultants.FirstOrDefault(c => c.FullName.Equals(consultantName, StringComparison.OrdinalIgnoreCase));
-
-        if (consultant is null)
+        if (consultantIndex is null)
         {
             ConsoleUI.WriteError(ClientResources.NoConsultantSelectedError);
             return;
         }
+
+        var consultant = freeConsultants[consultantIndex.Value];
 
         var error = await _gameServices.EnrollInTrainingAsync(training.Id, consultant.Id);
 
@@ -328,7 +321,8 @@ public class GameLoop
             ConsoleUI.WriteInfo(string.Format(ClientResources.ConsultantLineFormat, consultant.FullName, statusLabel));
 
             var skillsLabel = consultant.Skills.Count > 0
-                ? string.Join(", ", consultant.Skills.Select(s => s.Skill.Name))
+                ? string.Join(", ", consultant.Skills.Select(s =>
+                    string.Format(ClientResources.SkillWithLevelFormat, s.Skill.Name, s.Level)))
                 : ClientResources.NoSkillsLabel;
 
             ConsoleUI.WriteInfo($"   {string.Format(ClientResources.ConsultantSkillsFormat, skillsLabel)}");
@@ -337,4 +331,95 @@ public class GameLoop
         ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);
         Console.ReadLine();
     }
+    /// <summary>
+    /// Affiche le catalogue du tour — appels d'offres et formations — puis attend que le joueur ait
+    /// lu. N'appelle pas le serveur : tout vient du RoundDto reçu avec RoundStarted.
+    /// </summary>
+    private void ShowMarketScreen(RoundDto round)
+    {
+        ConsoleUI.WriteHeader(ClientResources.MarketHeader);
+        ConsoleUI.WriteHeader(ClientResources.TendersSectionHeader);
+        if(round.Tenders.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoTendersMessage);
+        }
+        else
+        {
+            var number = 1;
+
+            foreach (var tender in round.Tenders) 
+            { 
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TenderDetailFormat,
+                    number,
+                    tender.Name,
+                    tender.Budget,
+                    tender.RoundsNumber,
+                    tender.RequiredConsultants));
+
+
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TenderRequiredSkillsFormat,
+                    FormatRequiredSkills(tender.RequiredSkills)));
+
+                number++;
+            }
+        }
+        //TODO Training
+
+        ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);
+        Console.ReadLine();
+    }
+    /// <summary>Compétences exigées en une ligne lisible, ou le libellé « aucune » si la liste est vide.</summary>
+    private static string FormatRequiredSkills(ICollection<RequiredSkillDto> requiredSkills) =>
+        requiredSkills.Count > 0
+            ? string.Join(", ", requiredSkills.Select(required =>
+                string.Format(ClientResources.SkillWithLevelFormat, required.Skill.Name, required.Level)))
+            : ClientResources.NoSkillsLabel;
+    /// <summary>
+    /// Lit un numéro entre 1 et <paramref name="itemCount"/> et renvoie l'index correspondant.
+    /// Renvoie null si le joueur passe son tour (entrée vide) ou saisit une valeur hors bornes.
+    /// </summary>
+    private static int? ReadIndex(string prompt, int itemCount)
+    {
+        ConsoleUI.WritePrompt(prompt);
+        var input = ConsoleUI.ReadPrompt();
+
+        if (string.IsNullOrWhiteSpace(input)) return null;
+
+        if (!int.TryParse(input, out var number) || number < 1 || number > itemCount)
+        {
+            ConsoleUI.WriteError(ClientResources.InvalidNumberError);
+            return null;
+        }
+
+        return number - 1;
+    }
+
+    /// <summary>
+    /// Lit plusieurs numéros séparés par des virgules et renvoie les index correspondants, sans
+    /// doublon. Renvoie une liste vide si l'un des numéros est invalide.
+    /// </summary>
+    private static List<int> ReadIndexes(string prompt, int itemCount)
+    {
+        ConsoleUI.WritePrompt(prompt);
+        var input = ConsoleUI.ReadPrompt() ?? "";
+
+        var indexes = new List<int>();
+
+        foreach (var part in input.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (!int.TryParse(part, out var number) || number < 1 || number > itemCount)
+            {
+                ConsoleUI.WriteError(ClientResources.InvalidNumberError);
+                return [];
+            }
+
+            // « 1,1 » ne doit pas affecter deux fois le même consultant.
+            if (!indexes.Contains(number - 1)) indexes.Add(number - 1);
+        }
+
+        return indexes;
+    }
 }
+
