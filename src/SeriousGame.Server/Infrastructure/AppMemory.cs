@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using Server.Domain;
-using Server.Domain.Enums;
 
 namespace Server.Infrastructure;
 
@@ -39,47 +38,64 @@ public class AppMemory
         new Skill { Id = 20, Name = "REST APIs" }
     ];
 
-    // Un exemple de chaque type de donnée de seed, pour valider le format retenu (US03).
-    // Tender/Training sont immuables et réutilisables tels quels entre parties (comme Skill).
-    // ConsultantSeed est un blueprint, jamais un Consultant réel (voir ConsultantSeed.cs).
-    // Le catalogue complet suivra en US10 (Piste B) et les consultants de départ en US05 (Piste A).
-    public IReadOnlyList<Tender> TendersSeed { get; }
-    public IReadOnlyList<Training> TrainingsSeed { get; }
+    // Données de seed en lecture seule. Seuls des noms sont écrits à la main : durée, main-d'œuvre,
+    // compétences, niveaux et budget d'un Tender sont générés au tirage du tour, à partir du staff
+    // réellement en jeu (voir RoundFactory, US11). Un Seed est un blueprint, jamais une entité réelle.
+    public IReadOnlyList<TenderSeed> TenderSeeds { get; }
     public IReadOnlyList<ConsultantSeed> ConsultantsSeed { get; }
 
     public AppMemory()
     {
-        TendersSeed =
+        TenderSeeds =
         [
-            new Tender
-            {
-                Name = "Refonte du site vitrine",
-                Budget = 15_000,
-                RoundsNumber = 2,
-                RequiredSkills = { new RequiredSkill { Skill = Skills[2], Level = Level.Intermediate } } // JavaScript
-            }
-        ];
-
-        TrainingsSeed =
-        [
-            new Training
-            {
-                Name = "Initiation à React",
-                Skill = Skills[4], // React
-                Cost = 800,
-                RoundsNumber = 1
-            }
+            new TenderSeed { Name = "WhySoSerious" },
+            new TenderSeed { Name = "CodeMonkey" },
+            new TenderSeed { Name = "BugHunter" },
+            new TenderSeed { Name = "NullPointer" },
+            new TenderSeed { Name = "StackOverflowed" },
+            new TenderSeed { Name = "ItWorksOnMyMachine" },
+            new TenderSeed { Name = "CodeAndChill" },
+            new TenderSeed { Name = "CtrlAltElite" },
+            new TenderSeed { Name = "CommitThis" },
+            new TenderSeed { Name = "MergeAndDestroy" },
+            new TenderSeed { Name = "GitRekt" },
+            new TenderSeed { Name = "404NotFound" },
+            new TenderSeed { Name = "Segfault" },
+            new TenderSeed { Name = "SpaghettiCode" },
+            new TenderSeed { Name = "NoBugJustFeatures" },
+            new TenderSeed { Name = "WorksOnMyMachine" },
+            new TenderSeed { Name = "sudoMakeMeACoffee" },
+            new TenderSeed { Name = "HelloWorldAgain" },
+            new TenderSeed { Name = "ShipIt" },
+            new TenderSeed { Name = "TrustMeImADev" }
         ];
 
         ConsultantsSeed =
         [
-            new ConsultantSeed
-            {
-                Firstname = "Ada",
-                Lastname = "Lovelace",
-                SalaryRequirement = 4_000,
-                Skills = [ new ConsultantSkill { Skill = Skills[2] } ] // JavaScript, niveau Zero par défaut
-            }
+            new ConsultantSeed { Firstname = "Alice", Lastname = "Martin" },
+            new ConsultantSeed { Firstname = "Bruno", Lastname = "Costa" },
+            new ConsultantSeed { Firstname = "Chloé", Lastname = "Nguyen" },
+            new ConsultantSeed { Firstname = "David", Lastname = "Okafor" },
+            new ConsultantSeed { Firstname = "Elena", Lastname = "Rossi" },
+            new ConsultantSeed { Firstname = "Farid", Lastname = "Haddad" },
+            new ConsultantSeed { Firstname = "Grace", Lastname = "Kim" },
+            new ConsultantSeed { Firstname = "Hugo", Lastname = "Meyer" },
+            new ConsultantSeed { Firstname = "Inès", Lastname = "Dubois" },
+            new ConsultantSeed { Firstname = "Jonas", Lastname = "Lindqvist" },
+            new ConsultantSeed { Firstname = "Karim", Lastname = "Belkacem" },
+            new ConsultantSeed { Firstname = "Léa", Lastname = "Fontaine" },
+            new ConsultantSeed { Firstname = "Marco", Lastname = "Silva" },
+            new ConsultantSeed { Firstname = "Nadia", Lastname = "Petrova" },
+            new ConsultantSeed { Firstname = "Omar", Lastname = "El-Amin" },
+            new ConsultantSeed { Firstname = "Priya", Lastname = "Sharma" },
+            new ConsultantSeed { Firstname = "Quentin", Lastname = "Roy" },
+            new ConsultantSeed { Firstname = "Rania", Lastname = "Saidi" },
+            new ConsultantSeed { Firstname = "Samuel", Lastname = "Weiss" },
+            new ConsultantSeed { Firstname = "Tariq", Lastname = "Aziz" },
+            new ConsultantSeed { Firstname = "Uma", Lastname = "Reddy" },
+            new ConsultantSeed { Firstname = "Victor Hugo", Lastname = "Alves" },
+            new ConsultantSeed { Firstname = "Wei", Lastname = "Zhang" },
+            new ConsultantSeed { Firstname = "Yasmin", Lastname = "Koné" }
         ];
     }
 }

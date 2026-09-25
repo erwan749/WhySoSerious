@@ -23,14 +23,24 @@ public sealed class GameHub : Hub<IGameHubClient>, IGameHubServer
         return _gameFlowService.JoinGameRoom(gameId, playerId, Context.ConnectionId);
     }
 
-    public  Task ApplyToTender(ApplyToTenderCommand applyToTenderCommand)
+    public async Task ApplyToTender(ApplyToTenderCommand applyToTenderCommand)
     {
-        return _gameFlowService.ApplyToTender(applyToTenderCommand);
+        var result = await _gameFlowService.ApplyToTender(applyToTenderCommand);
+
+        if (!result.Success)
+        {
+            throw new HubException(result.Error);
+        }
     }
 
-    public  Task EnrollInTraining(EnrollInTrainingCommand enrollInTrainingCommand)
+    public async Task EnrollInTraining(EnrollInTrainingCommand enrollInTrainingCommand)
     {
-        return _gameFlowService.EnrollInTraining(enrollInTrainingCommand);
+        var result = await _gameFlowService.EnrollInTraining(enrollInTrainingCommand);
+
+        if (!result.Success)
+        {
+            throw new HubException(result.Error);
+        }
     }
 
     public  Task SubmitDecisions(SubmitDecisionsCommand submitDecisionsCommand)

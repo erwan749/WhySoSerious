@@ -31,14 +31,39 @@ public static class Mapper
         Name = skill.Name
     };
 
+    public static ConsultantSkillDto ToDto(ConsultantSkill consultantSkill) => new()
+    {
+        Skill = ToDto(consultantSkill.Skill),
+        Level = ToDto(consultantSkill.Level)
+    };
+
     public static ConsultantDto ToDto(Consultant consultant) => new()
     {
         Id = consultant.Id,
         FullName = consultant.FullName,
         SalaryRequirement = consultant.SalaryRequirement,
-        Skills = [], // TODO US05 : mapper consultant.Skills une fois ConsultantSkill en place
-        // IsBusy = false à faire seulement à parit de l'US06// TODO US06 : calculé depuis les Contracts / TrainingEnrollments actifs
+        Skills = consultant.Skills.Select(ToDto).ToList(),
+        Status = ResolveStatus(consultant)
     };
+
+    private static ConsultantStatus ResolveStatus(Consultant consultant)
+    {
+        var company = consultant.Company;
+        
+        if (!company.IsConsultantBusy(consultant)) return ConsultantStatus.Free;
+
+        if (company.Contracts.Any(c => c.Status == ContractStatus.Active && c.AssignedConsultants.Contains(consultant)))
+        {
+            return ConsultantStatus.OnMission;
+        }
+
+        if (company.TrainingEnrollments.Any(e => e.Status == EnrollmentStatus.InProgress && e.Consultant == consultant))
+        {
+            return ConsultantStatus.InTraining;
+        }
+
+        return ConsultantStatus.Free;
+    }
 
     public static CompanyDto ToDto(Company company) => new()
     {
@@ -47,7 +72,7 @@ public static class Mapper
         OwnerId = company.PlayerOwner.Id,
         Treasury = company.Treasury,
         Revenue = company.Revenue,
-        Staff = company.Staff.Select(ToDto).ToList()
+        Staff = company.Staffs.Select(ToDto).ToList()
     };
 
     public static RequiredSkillDto ToDto(RequiredSkill requiredSkill) => new()
@@ -62,7 +87,8 @@ public static class Mapper
         Name = tender.Name,
         RequiredSkills = tender.RequiredSkills.Select(ToDto).ToList(),
         Budget = tender.Budget,
-        RoundsNumber = tender.RoundsNumber
+        RoundsNumber = tender.RoundsNumber,
+        RequiredConsultants = tender.RequiredConsultants
     };
 
     private static SkillLevel ToDto(Level level) => level switch

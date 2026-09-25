@@ -8,6 +8,7 @@ namespace Shared.Abstractions;
 
 public interface IGameHubClient
 {
+    Task GameStarted(ICollection<CompanyDto> companies);
     Task RoundStarted(RoundDto roundDto);
     Task PlayerSubmitted(string nickName);
     Task RoundResolved(RoundResultDto roundResultDto);

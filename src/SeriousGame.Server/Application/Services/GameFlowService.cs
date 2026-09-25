@@ -6,6 +6,9 @@ using Server.Hubs;
 using Shared.Abstractions;
 using Shared.Models.Dtos;
 using Shared.Models.Requests;
+using Microsoft.Extensions.Options;
+using Server.Infrastructure;
+using Server.Options;
 
 namespace Server.Application.Services;
 
@@ -15,23 +18,105 @@ public class GameFlowService : IGameFlowService
     private readonly PlayerService _playerService;
     private readonly IHubContext<GameHub, IGameHubClient> _hubContext;
     private readonly ILogger<GameFlowService> _logger;
+    private readonly GameOptions _gameOptions;
+    private readonly AppMemory _appMemory;
 
-    public GameFlowService(GameService gameService, PlayerService playerService, IHubContext<GameHub, IGameHubClient> hubContext, ILogger<GameFlowService> logger)
+    public GameFlowService(
+        GameService gameService,
+        PlayerService playerService,
+        IHubContext<GameHub, IGameHubClient> hubContext,
+        ILogger<GameFlowService> logger,
+        IOptions<GameOptions> gameOptions,
+        AppMemory appMemory)
     {
         _gameService = gameService;
         _playerService = playerService;
         _hubContext = hubContext;
         _logger = logger;
+        _gameOptions = gameOptions.Value;
+        _appMemory = appMemory;
     }
 
-    public Task ApplyToTender(ApplyToTenderCommand command)
+    public Task<CommandResult> ApplyToTender(ApplyToTenderCommand command)
     {
-        return Task.CompletedTask;
+        var game = _gameService.GetGameByRoundId(command.RoundId);
+        var round = game?.Rounds.FirstOrDefault(r => r.Id == command.RoundId);
+        var company = game?.Companies.FirstOrDefault(c => c.PlayerOwner.Id == command.PlayerId);
+        var tender = round?.Tenders.FirstOrDefault(t => t.Id == command.TenderId);
+
+        if (game is null || round is null || company is null || tender is null)
+        {
+            _logger.LogWarning(
+                "Invalid ApplyToTender: round {RoundId}, player {PlayerId}, tender {TenderId}",
+                command.RoundId, command.PlayerId, command.TenderId);
+            return Task.FromResult(CommandResult.Fail("Candidature invalide."));
+        }
+
+        lock (game)
+        {
+            var consultants = company.Staffs.Where(c => command.ConsultantIds.Contains(c.Id)).ToList();
+
+            if (consultants.Count != command.ConsultantIds.Count)
+            {
+                return Task.FromResult(CommandResult.Fail("Un ou plusieurs consultants sont introuvables."));
+            }
+
+            var validation = TenderApplicationValidator.Validate(round, company, tender, consultants);
+
+            if (!validation.Success)
+            {
+                return Task.FromResult(validation);
+            }
+
+            round.Applications.Add(new TenderApplication
+            {
+                Round = round,
+                Company = company,
+                Tender = tender,
+                AssignedConsultants = consultants
+            });
+        }
+
+        return Task.FromResult(CommandResult.Ok());
     }
 
-    public Task EnrollInTraining(EnrollInTrainingCommand command)
+    public Task<CommandResult> EnrollInTraining(EnrollInTrainingCommand command)
     {
-        return Task.CompletedTask;
+        var game = _gameService.GetGameByRoundId(command.RoundId);
+        var round = game?.Rounds.FirstOrDefault(r => r.Id == command.RoundId);
+        var company = game?.Companies.FirstOrDefault(c => c.PlayerOwner.Id == command.PlayerId);
+        var training = round?.Trainings.FirstOrDefault(t => t.Id == command.TrainingId);
+        var consultant = company?.Staffs.FirstOrDefault(c => c.Id == command.ConsultantId);
+
+        if (game is null || round is null || company is null || training is null || consultant is null)
+        {
+            _logger.LogWarning(
+                "Invalid EnrollInTraining: round {RoundId}, player {PlayerId}, training {TrainingId}, consultant {ConsultantId}",
+                command.RoundId, command.PlayerId, command.TrainingId, command.ConsultantId);
+            return Task.FromResult(CommandResult.Fail("Inscription invalide."));
+        }
+
+        lock (game)
+        {
+            var validation = TrainingEnrollmentValidator.Validate(round, company, training, consultant);
+
+            if (!validation.Success)
+            {
+                return Task.FromResult(validation);
+            }
+
+            company.Withdraw(training.Cost);
+
+            company.TrainingEnrollments.Add(new TrainingEnrollment
+            {
+                Company = company,
+                Consultant = consultant,
+                Training = training,
+                RemainingRounds = training.RoundsNumber
+            });
+        }
+
+        return Task.FromResult(CommandResult.Ok());
     }
 
     public async Task JoinGameRoom(string gameId, string playerId, string connectionId)
@@ -78,12 +163,21 @@ public class GameFlowService : IGameFlowService
 
         if (firstRound is not null)
         {
+            await _hubContext.Clients.Group(game.Id).GameStarted(game.Companies.Select(Mapper.ToDto).ToList());
             await StartRound(game, firstRound);
         }
     }
 
     public Task StartGame(Game game)
     {
+        foreach (var player in game.Players)
+        {
+            var company = CompanyFactory.Create(player, _gameOptions);
+            game.Companies.Add(company);
+        }
+
+        ConsultantFactory.AssignInitialStaff(game.Companies.ToList(), _appMemory.ConsultantsSeed, _appMemory.Skills, Random.Shared);
+
         return Task.CompletedTask;
     }
 
@@ -150,20 +244,11 @@ public class GameFlowService : IGameFlowService
 
         await StartRound(game, nextRound);
     }
+    /// <summary>
+    /// delegue la construction du catalogue a RoundFactory
+    /// </summary>
 
-    // TODO US11 : le catalogue du tour (appels d'offres, formations) sera généré par RoundFactory.
-    private static Round CreateRound(Game game)
-    {
-        var round = new Round
-        {
-            Game = game,
-            Order = game.Rounds.Count + 1
-        };
-
-        game.Rounds.Add(round);
-
-        return round;
-    }
+    private Round CreateRound(Game game) => RoundFactory.Create(game, _appMemory.TenderSeeds, _gameOptions, Random.Shared);
 
     private Task StartRound(Game game, Round round)
     {
