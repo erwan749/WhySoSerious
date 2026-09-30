@@ -379,7 +379,7 @@ Games available:
     <value>   Required: {0}</value>
   </data>
   <data name="TrainingDetailFormat" xml:space="preserve">
-    <value>{0}. {1} - {2} - {3} € - {4} round(s)</value>
+    <value>{0}. {1} -  {2} € - {3} round(s)</value>
   </data>
   <data name="InvalidNumberError" xml:space="preserve">
     <value>Invalid number.</value>
