@@ -196,4 +196,71 @@ public class RoundFactoryTests
 
 		Assert.Empty(round.Tenders);
 	}
+    [Fact]
+    public void Create_DrawsTrainingsOnTheSkillsInPlay()
+    {
+        // Deux joueurs, une formation par joueur, et exactement deux compétences distinctes
+        // en jeu (HTML et SQL) : le tirage doit en proposer deux.
+        var game = MakeGame(playerCount: 2);
+        var options = MakeOptions();
+
+        var round = RoundFactory.Create(game, Seeds, options, new Random(42));
+
+
+        Assert.Equal(options.TrainingNumberPerPlayer * game.Players.Count, round.Trainings.Count);
+        Assert.All(round.Trainings, training =>
+        {
+            Assert.Equal(options.TrainingBaseCost, training.Cost);
+            Assert.Equal(options.TrainingRoundsNumber, training.RoundsNumber);
+            Assert.False(string.IsNullOrWhiteSpace(training.Name));
+        });
+    }
+
+    [Fact]
+    public void Create_OnlyOffersSkillsSomeoneActuallyHas()
+    {
+        var game = MakeGame();
+
+        var round = RoundFactory.Create(game, Seeds, MakeOptions(), new Random(42));
+
+        var skillsInPlay = game.Companies
+            .SelectMany(company => company.Staffs)
+            .SelectMany(consultant => consultant.Skills)
+            .Select(consultantSkill => consultantSkill.Skill)
+            .ToList();
+
+        Assert.All(round.Trainings, training => Assert.Contains(training.Skill, skillsInPlay));
+    }
+
+    [Fact]
+    public void Create_DoesNotOfferTheSameSkillTwiceInARound()
+    {
+        var game = MakeGame();
+
+        var round = RoundFactory.Create(game, Seeds, MakeOptions(), new Random(42));
+
+        var skills = round.Trainings.Select(training => training.Skill).ToList();
+
+        Assert.Equal(skills.Count, skills.Distinct().Count());
+    }
+
+    [Fact]
+    public void Create_SkipsSkillsEveryHolderHasMastered()
+    {
+        // Une entreprise, deux consultants : l'un en HTML, l'autre en SQL.
+        var game = MakeGame(playerCount: 1, consultantsPerCompany: 2);
+        var company = game.Companies.Single();
+
+        // Le détenteur de HTML est porté à Expert : plus rien à lui apprendre.
+        var htmlSkill = company.Staffs
+            .SelectMany(consultant => consultant.Skills)
+            .Single(consultantSkill => consultantSkill.Skill == Html);
+
+        while (htmlSkill.Level < Level.Expert) htmlSkill.LevelUp();
+
+        var round = RoundFactory.Create(game, Seeds, MakeOptions(), new Random(42));
+
+        Assert.NotEmpty(round.Trainings);
+        Assert.DoesNotContain(round.Trainings, training => training.Skill == Html);
+    }
 }

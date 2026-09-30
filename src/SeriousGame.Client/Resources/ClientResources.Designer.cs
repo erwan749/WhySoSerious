@@ -771,7 +771,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à {0}. {1} - {2} - {3} € - {4} round(s).
+        ///   Recherche une chaîne localisée semblable à {0}. {1} -  {2} € - {3} round(s).
         /// </summary>
         internal static string TrainingDetailFormat {
             get {

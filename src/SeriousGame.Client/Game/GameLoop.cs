@@ -200,18 +200,6 @@ public class GameLoop
 
         var trainings = round.Trainings.ToList();
 
-        // TODO US25 : à retirer quand l'écran marché listera les formations générées.
-        for (var i = 0; i < trainings.Count; i++)
-        {
-            ConsoleUI.WriteInfo(string.Format(
-                ClientResources.TrainingDetailFormat,
-                i + 1,
-                trainings[i].Name,
-                trainings[i].Skill.Name,
-                trainings[i].Cost,
-                trainings[i].RoundsNumber));
-        }
-
         var trainingIndex = ReadIndex(ClientResources.EnrollInTrainingPrompt, trainings.Count);
         if (trainingIndex is null) return;
 
@@ -335,11 +323,14 @@ public class GameLoop
     /// Affiche le catalogue du tour — appels d'offres et formations — puis attend que le joueur ait
     /// lu. N'appelle pas le serveur : tout vient du RoundDto reçu avec RoundStarted.
     /// </summary>
-    private void ShowMarketScreen(RoundDto round)
+    private static void ShowMarketScreen(RoundDto round)
     {
         ConsoleUI.WriteHeader(ClientResources.MarketHeader);
-        ConsoleUI.WriteHeader(ClientResources.TendersSectionHeader);
-        if(round.Tenders.Count == 0)
+
+        ConsoleUI.WriteInfo(ClientResources.TendersSectionHeader);
+        Console.WriteLine();
+
+        if (round.Tenders.Count == 0)
         {
             ConsoleUI.WriteInfo(ClientResources.NoTendersMessage);
         }
@@ -347,8 +338,8 @@ public class GameLoop
         {
             var number = 1;
 
-            foreach (var tender in round.Tenders) 
-            { 
+            foreach (var tender in round.Tenders)
+            {
                 ConsoleUI.WriteInfo(string.Format(
                     ClientResources.TenderDetailFormat,
                     number,
@@ -357,7 +348,6 @@ public class GameLoop
                     tender.RoundsNumber,
                     tender.RequiredConsultants));
 
-
                 ConsoleUI.WriteInfo(string.Format(
                     ClientResources.TenderRequiredSkillsFormat,
                     FormatRequiredSkills(tender.RequiredSkills)));
@@ -365,8 +355,31 @@ public class GameLoop
                 number++;
             }
         }
-        //TODO Training
+        Console.WriteLine();
+        ConsoleUI.WriteInfo(ClientResources.TrainingsSectionHeader);
+        Console.WriteLine();
 
+        if (round.Trainings.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoTrainingsMessage);
+        }
+        else
+        {
+            var number = 1;
+
+            foreach (var training in round.Trainings)
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TrainingDetailFormat,
+                    number,
+                    training.Name,
+                    training.Cost,
+                    training.RoundsNumber));
+
+                number++;
+            }
+        }
+        Console.WriteLine();
         ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);
         Console.ReadLine();
     }

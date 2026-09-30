@@ -1,5 +1,6 @@
 using Server.Application.Abstractions;
 using Server.Domain;
+using Server.Domain.Enums;
 
 namespace Server.Application.Services;
 
@@ -29,7 +30,17 @@ public static class TrainingEnrollmentValidator
         {
             return CommandResult.Fail("Trésorerie insuffisante pour financer cette formation.");
         }
+        var consultantSkill = consultant.Skills.FirstOrDefault(s => s.Skill == training.Skill);
 
+        if (consultantSkill is null)
+        {
+            return CommandResult.Fail($"{consultant.FullName} ne maîtrise pas {training.Skill.Name}.");
+        }
+
+        if (consultantSkill.Level == Level.Expert)
+        {
+            return CommandResult.Fail($"{consultant.FullName} est déjà au niveau maximum en {training.Skill.Name}.");
+        }
         return CommandResult.Ok();
     }
 }
