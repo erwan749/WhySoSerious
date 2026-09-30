@@ -182,5 +182,30 @@ public static class RoundFactory
 
         return (StarterMinConsultants, StarterMaxConsultants, StarterMinDuration);
     }
+    /// <summary>
+    /// Bâtit une liste de formation parmis les les consultant dans une compagnie,
+    /// Retourne une la liste si il y a les skill concerne et inferieur aux niveau maximum.
+    /// </summary>
+    /// <param name="game"></param>
+    /// <param name="gameOptions"></param>
+    /// <param name="random"></param>
+    /// <returns></returns>
+    private static ICollection<Training> BuildTraining(Game game, GameOptions gameOptions, Random random)
+    {
+        List<Training> training = new List<Training>();
 
+        var skills = game.Companies
+            .SelectMany(c => c.Staffs)
+            .SelectMany(s => s.Skills)
+            .Where(cs => cs.Level != Level.Expert)
+            .GroupBy(cs => cs.Skill)
+            .Select(g => new
+            {
+                Skill = g.Key.Name,
+                Level = g.Min(cs => cs.Level)
+            })
+            .ToList();
+
+        return training;
+    }
 }
