@@ -20,6 +20,7 @@ public class GameFlowService : IGameFlowService
     private readonly ILogger<GameFlowService> _logger;
     private readonly GameOptions _gameOptions;
     private readonly AppMemory _appMemory;
+    private readonly RoundResolver _roundResolver;
 
     public GameFlowService(
         GameService gameService,
@@ -27,7 +28,8 @@ public class GameFlowService : IGameFlowService
         IHubContext<GameHub, IGameHubClient> hubContext,
         ILogger<GameFlowService> logger,
         IOptions<GameOptions> gameOptions,
-        AppMemory appMemory)
+        AppMemory appMemory,
+        RoundResolver roundResolver)
     {
         _gameService = gameService;
         _playerService = playerService;
@@ -35,6 +37,7 @@ public class GameFlowService : IGameFlowService
         _logger = logger;
         _gameOptions = gameOptions.Value;
         _appMemory = appMemory;
+        _roundResolver = roundResolver;
     }
 
     public Task<CommandResult> ApplyToTender(ApplyToTenderCommand command)
@@ -211,7 +214,14 @@ public class GameFlowService : IGameFlowService
 
             // Marqué tout de suite dans le verrou : deux soumissions simultanées ne doivent pas
             // résoudre le tour deux fois.
-            if (everyoneSubmitted) round.IsCompleted = true;
+            if (everyoneSubmitted)
+            {
+                round.IsCompleted = true;
+
+                _roundResolver.ResolveTenders(round);
+                // TODO US14 : avancement des contrats et formations.
+                // TODO US15 : paiement des salaires.
+            }
         }
 
         await _hubContext.Clients.Group(game.Id).PlayerSubmitted(player.Nickname);

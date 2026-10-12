@@ -1,0 +1,156 @@
+﻿using Microsoft.Extensions.Logging.Abstractions;
+using Server.Application.Services;
+using Server.Domain;
+using Server.Domain.Enums;
+
+namespace SeriousGame.UnitTests;
+
+public class RoundResolverTests
+{
+    private static readonly Skill Html = new() { Id = 1, Name = "HTML" };
+
+    private readonly RoundResolver _resolver =
+        new(new BestCoverageAwardStrategy(), NullLogger<RoundResolver>.Instance);
+
+    private static Player MakePlayer() =>
+        new() { Id = Guid.NewGuid().ToString(), Nickname = "Ada", ConnectionId = "c" };
+
+    private static Company MakeCompany(string name) =>
+        new() { Name = name, PlayerOwner = MakePlayer(), InitialTreasury = 1_000_000 };
+
+    private static Consultant MakeConsultant(Company company, Level? level)
+    {
+        var consultant = new Consultant { Firstname = "Test", Lastname = company.Name, Company = company };
+
+        if (level is not null)
+        {
+            var consultantSkill = new ConsultantSkill { Skill = Html };
+            while (consultantSkill.Level < level) consultantSkill.LevelUp();
+            consultant.Skills.Add(consultantSkill);
+        }
+
+        company.Staffs.Add(consultant);
+
+        return consultant;
+    }
+
+    private static Round MakeRound(Tender tender)
+    {
+        var round = new Round { Game = new Game { Name = "G", Owner = MakePlayer() }, Order = 1 };
+        round.Tenders.Add(tender);
+
+        return round;
+    }
+
+    private static Tender MakeTender(int roundsNumber = 2)
+    {
+        var tender = new Tender
+        {
+            Name = "AO",
+            Budget = 15_000,
+            RoundsNumber = roundsNumber,
+            RequiredConsultants = 1
+        };
+
+        tender.RequiredSkills.Add(new RequiredSkill { Skill = Html, Level = Level.Basic });
+
+        return tender;
+    }
+
+    private static TenderApplication AddApplication(Round round, Tender tender, Company company, Consultant consultant)
+    {
+        var application = new TenderApplication
+        {
+            Round = round,
+            Company = company,
+            Tender = tender,
+            AssignedConsultants = [consultant]
+        };
+
+        round.Applications.Add(application);
+
+        return application;
+    }
+
+    [Fact]
+    public void ResolveTenders_AwardsTheBestApplicationAndRejectsTheOthers()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+
+        var modest = MakeCompany("Modeste");
+        var strong = MakeCompany("Costaud");
+
+        var loser = AddApplication(round, tender, modest, MakeConsultant(modest, Level.Basic));
+        var winner = AddApplication(round, tender, strong, MakeConsultant(strong, Level.Expert));
+
+        _resolver.ResolveTenders(round);
+
+        Assert.Equal(ApplicationStatus.Won, winner.Status);
+        Assert.Equal(ApplicationStatus.Lost, loser.Status);
+    }
+
+    [Fact]
+    public void ResolveTenders_CreatesAnActiveContractForTheWinner()
+    {
+        var tender = MakeTender(roundsNumber: 3);
+        var round = MakeRound(tender);
+
+        var company = MakeCompany("Acme");
+        var consultant = MakeConsultant(company, Level.Advanced);
+
+        AddApplication(round, tender, company, consultant);
+
+        _resolver.ResolveTenders(round);
+
+        var contract = Assert.Single(company.Contracts);
+
+        Assert.Equal(ContractStatus.Active, contract.Status);
+        Assert.Equal(tender.RoundsNumber, contract.RemainingRounds);
+        Assert.Contains(consultant, contract.AssignedConsultants);
+    }
+
+    [Fact]
+    public void ResolveTenders_TiesUpTheAssignedConsultants()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+
+        var company = MakeCompany("Acme");
+        var consultant = MakeConsultant(company, Level.Advanced);
+
+        AddApplication(round, tender, company, consultant);
+
+        _resolver.ResolveTenders(round);
+
+        // Le contrat actif rend le consultant indisponible pour le tour suivant.
+        Assert.True(company.IsConsultantBusy(consultant));
+        Assert.DoesNotContain(consultant, company.GetAvailableConsultants());
+    }
+
+    [Fact]
+    public void ResolveTenders_RejectsEveryoneWhenNoApplicationIsAdmissible()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+
+        var company = MakeCompany("Acme");
+        var application = AddApplication(round, tender, company, MakeConsultant(company, level: null));
+
+        _resolver.ResolveTenders(round);
+
+        Assert.Equal(ApplicationStatus.Lost, application.Status);
+        Assert.Empty(company.Contracts);
+    }
+
+    [Fact]
+    public void ResolveTenders_DoesNothingWhenNobodyApplied()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+
+        _resolver.ResolveTenders(round);
+
+        Assert.Empty(round.Applications);
+    }
+}
