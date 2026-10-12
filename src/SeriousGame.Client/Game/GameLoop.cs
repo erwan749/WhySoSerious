@@ -384,6 +384,38 @@ public class GameLoop
 
                 number++;
             }
+            
+        }
+        
+        Console.WriteLine();
+        ConsoleUI.WriteInfo(ClientResources.CandidatesSectionHeader);
+        Console.WriteLine();
+
+        if (round.Candidates.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoCandidatesMessage);
+        }
+        else
+        {
+            var number = 1;
+
+            foreach (var candidate in round.Candidates)
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.CandidateDetailFormat,
+                    number,
+                    candidate.FullName,
+                    candidate.SalaryRequirement));
+
+                var skillsLabel = candidate.Skills.Count > 0
+                    ? string.Join(", ", candidate.Skills.Select(s =>
+                        string.Format(ClientResources.SkillWithLevelFormat, s.Skill.Name, s.Level)))
+                    : ClientResources.NoSkillsLabel;
+
+                ConsoleUI.WriteInfo($"   {string.Format(ClientResources.ConsultantSkillsFormat, skillsLabel)}");
+
+                number++;
+            }
         }
         Console.WriteLine();
         ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);

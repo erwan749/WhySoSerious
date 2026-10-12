@@ -390,4 +390,13 @@ Games available:
   <data name="RankingLineFormat" xml:space="preserve">
     <value>#{0} — {1} ({2} revenue)</value>
   </data>
+  <data name="CandidatesSectionHeader" xml:space="preserve">
+    <value>Recruitment</value>
+  </data>
+  <data name="Recruitment" xml:space="preserve">
+    <value>No candidates available this round.</value>
+  </data>
+  <data name="CandidateDetailFormat" xml:space="preserve">
+    <value>{0}. {1} - {2} € / month</value>
+  </data>
 </root>

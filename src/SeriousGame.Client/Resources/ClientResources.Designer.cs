@@ -398,6 +398,12 @@ namespace Client.Resources {
                 return ResourceManager.GetString("NoCompanyError", resourceCulture);
             }
         }
+
+        internal static string NoCandidatesMessage {
+            get {
+                return ResourceManager.GetString("NoCandidatesMessage", resourceCulture);
+            }
+        }
         
         internal static string ConsultantSkillsFormat {
             get {
@@ -525,13 +531,12 @@ namespace Client.Resources {
             }
         }
         
-        
         internal static string TendersSectionHeader {
             get {
                 return ResourceManager.GetString("TendersSectionHeader", resourceCulture);
             }
         }
-
+        
         internal static string TrainingsSectionHeader {
             get {
                 return ResourceManager.GetString("TrainingsSectionHeader", resourceCulture);
@@ -571,6 +576,24 @@ namespace Client.Resources {
         internal static string RankingLineFormat {
             get {
                 return ResourceManager.GetString("RankingLineFormat", resourceCulture);
+            }
+        }
+        
+        internal static string CandidatesSectionHeader {
+            get {
+                return ResourceManager.GetString("CandidatesSectionHeader", resourceCulture);
+            }
+        }
+        
+        internal static string Recruitment {
+            get {
+                return ResourceManager.GetString("Recruitment", resourceCulture);
+            }
+        }
+        
+        internal static string CandidateDetailFormat {
+            get {
+                return ResourceManager.GetString("CandidateDetailFormat", resourceCulture);
             }
         }
     }
