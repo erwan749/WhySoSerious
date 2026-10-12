@@ -115,7 +115,8 @@ public class GameFlowService : IGameFlowService
                 Company = company,
                 Consultant = consultant,
                 Training = training,
-                RemainingRounds = training.RoundsNumber
+                RemainingRounds = training.RoundsNumber,
+                StartedAtRound = round.Order
             });
         }
 
@@ -218,8 +219,8 @@ public class GameFlowService : IGameFlowService
             {
                 round.IsCompleted = true;
 
-                _roundResolver.ResolveTenders(round);
                 // TODO US14 : avancement des contrats et formations.
+                _roundResolver.ResolveTenders(round);
                 // TODO US15 : paiement des salaires.
             }
         }
