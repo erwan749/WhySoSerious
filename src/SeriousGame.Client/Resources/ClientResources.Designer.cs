@@ -525,7 +525,10 @@ namespace Client.Resources {
             }
         }
         
-        internal static string TendersSectionHeader {
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0}. {1} -  {2} € - {3} round(s).
+        /// </summary>
+        internal static string TrainingDetailFormat {
             get {
                 return ResourceManager.GetString("TendersSectionHeader", resourceCulture);
             }

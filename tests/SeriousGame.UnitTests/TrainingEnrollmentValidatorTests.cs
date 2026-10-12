@@ -6,10 +6,27 @@ namespace SeriousGame.UnitTests;
 
 public class TrainingEnrollmentValidatorTests
 {
+    private static readonly Skill CSharp = new() { Id = 1, Name = "C#" };
     private static Player MakePlayer() => new() { Id = Guid.NewGuid().ToString(), Nickname = "Ada", ConnectionId = "c" };
-    private static Company MakeCompany(int treasury = 5000) => new() { Name = "Acme", PlayerOwner = MakePlayer(), InitialTreasury = treasury };
-    private static Consultant MakeConsultant(Company company) => new() { Firstname = "Bob", Lastname = "Test", Company = company };
-    private static Training MakeTraining(int cost = 500) => new() { Name = "Formation", Skill = new Skill { Id = 1, Name = "C#" }, Cost = cost, RoundsNumber = 1 };
+    private static Company MakeCompany(int treasury = 5000) => new() { Name = "World Adomination", PlayerOwner = MakePlayer(), InitialTreasury = treasury };
+    private static Consultant MakeConsultant(Company company, Level? skillLevel = Level.Basic)
+    {
+        var consultant = new Consultant { Firstname = "Ado", Lastname = "Abo", Company = company };
+
+        // skillLevel null : consultant sans la compétence enseignée.
+        if (skillLevel is null) return consultant;
+
+        var consultantSkill = new ConsultantSkill { Skill = CSharp };
+
+        // Level est en private set : on monte cran par cran, comme en production.
+        while (consultantSkill.Level < skillLevel) consultantSkill.LevelUp();
+
+        consultant.Skills.Add(consultantSkill);
+
+        return consultant;
+    }
+    private static Training MakeTraining(int cost = 500) =>
+        new() { Name = "Formation", Skill = CSharp, Cost = cost, RoundsNumber = 1 };
     private static Round MakeRound(params Training[] trainings)
     {
         var round = new Round { Game = new Game { Name = "G", Owner = MakePlayer() }, Order = 1 };
@@ -90,5 +107,30 @@ public class TrainingEnrollmentValidatorTests
         var result = TrainingEnrollmentValidator.Validate(round, company, training, consultant);
 
         Assert.True(result.Success);
+    }
+    [Fact]
+    public void Validate_Fails_WhenConsultantDoesNotHaveTheSkill()
+    {
+        var company = MakeCompany();
+        var consultant = MakeConsultant(company, skillLevel: null);
+        var training = MakeTraining();
+        var round = MakeRound(training);
+
+        var result = TrainingEnrollmentValidator.Validate(round, company, training, consultant);
+
+        Assert.False(result.Success);
+    }
+
+    [Fact]
+    public void Validate_Fails_WhenConsultantIsAlreadyExpert()
+    {
+        var company = MakeCompany();
+        var consultant = MakeConsultant(company, Level.Expert);
+        var training = MakeTraining();
+        var round = MakeRound(training);
+
+        var result = TrainingEnrollmentValidator.Validate(round, company, training, consultant);
+
+        Assert.False(result.Success);
     }
 }
