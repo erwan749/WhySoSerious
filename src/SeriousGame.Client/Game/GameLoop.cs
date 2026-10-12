@@ -132,6 +132,7 @@ public class GameLoop
 
     await RunTenderApplicationStepAsync(round);
     await RunTrainingEnrollmentStepAsync(round);
+    await RunRecruitmentStepAsync(round);
 }
 
     private async Task RunTenderApplicationStepAsync(RoundDto round)
@@ -245,6 +246,30 @@ public class GameLoop
         }
     }
 
+    private Task RunRecruitmentStepAsync(RoundDto round)
+    {
+        if (round.Candidates.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoCandidatesMessage);
+            return Task.CompletedTask;
+        }
+
+        var candidates = round.Candidates.ToList();
+
+        var candidateIndex = ReadIndex(ClientResources.RecruitCandidatePrompt, candidates.Count);
+        if (candidateIndex is null) return Task.CompletedTask;
+
+        var candidate = candidates[candidateIndex.Value];
+
+        ConsoleUI.WriteInfo(string.Format(ClientResources.CandidateChosenMessage, candidate.FullName));
+        _roundDecisions.Add(string.Format(
+            ClientResources.RecruitmentDecisionSummaryFormat,
+            candidate.FullName,
+            candidate.SalaryRequirement));
+
+        return Task.CompletedTask;
+    }
+    
     private List<ConsultantDto> GetFreeConsultants() =>
         _session.MyCompany?.Staff.Where(c => c.Status == ConsultantStatus.Free).ToList() ?? [];
 

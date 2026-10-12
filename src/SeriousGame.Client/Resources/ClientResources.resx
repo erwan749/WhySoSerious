@@ -399,4 +399,13 @@ Games available:
   <data name="CandidateDetailFormat" xml:space="preserve">
     <value>{0}. {1} - {2} € / month</value>
   </data>
+  <data name="RecruitCandidatePrompt" xml:space="preserve">
+    <value>Which candidate do you want to recruit? (number, or press Enter to skip)</value>
+  </data>
+  <data name="CandidateChosenMessage" xml:space="preserve">
+    <value>You want to recruit {0}.</value>
+  </data>
+  <data name="RecruitmentDecisionSummaryFormat" xml:space="preserve">
+    <value>Recruit {0} ({1} € / month)</value>
+  </data>
 </root>

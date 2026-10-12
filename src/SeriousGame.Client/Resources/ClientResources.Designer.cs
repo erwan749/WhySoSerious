@@ -398,7 +398,7 @@ namespace Client.Resources {
                 return ResourceManager.GetString("NoCompanyError", resourceCulture);
             }
         }
-
+        
         internal static string NoCandidatesMessage {
             get {
                 return ResourceManager.GetString("NoCandidatesMessage", resourceCulture);
@@ -594,6 +594,24 @@ namespace Client.Resources {
         internal static string CandidateDetailFormat {
             get {
                 return ResourceManager.GetString("CandidateDetailFormat", resourceCulture);
+            }
+        }
+        
+        internal static string RecruitCandidatePrompt {
+            get {
+                return ResourceManager.GetString("RecruitCandidatePrompt", resourceCulture);
+            }
+        }
+        
+        internal static string CandidateChosenMessage {
+            get {
+                return ResourceManager.GetString("CandidateChosenMessage", resourceCulture);
+            }
+        }
+        
+        internal static string RecruitmentDecisionSummaryFormat {
+            get {
+                return ResourceManager.GetString("RecruitmentDecisionSummaryFormat", resourceCulture);
             }
         }
     }
