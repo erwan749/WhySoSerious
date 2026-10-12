@@ -268,7 +268,7 @@ Games available:
     <value>🏁 Game over</value>
   </data>
   <data name="GameOverMessage" xml:space="preserve">
-    <value>Thanks for playing! (final scoring not implemented yet)</value>
+    <value>Thanks for playing !</value>
   </data>
   <data name="PlayerSubmittedFormat" xml:space="preserve">
     <value>📨 {0} submitted their decisions.</value>
@@ -386,5 +386,8 @@ Games available:
   </data>
   <data name="NumberedConsultantLineFormat" xml:space="preserve">
     <value>{0}. {1} ({2})</value>
+  </data>
+  <data name="RankingLineFormat" xml:space="preserve">
+    <value>#{0} — {1} ({2} revenue)</value>
   </data>
 </root>

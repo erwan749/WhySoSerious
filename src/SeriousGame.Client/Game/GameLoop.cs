@@ -273,8 +273,15 @@ public class GameLoop
 
     private void OnGameEnded(RankingDto ranking)
     {
+        
         // TODO US17 : affichage du classement final.
         ConsoleUI.WriteHeader(ClientResources.GameOverHeader);
+
+        foreach (var entry in ranking.Entries.OrderBy(e => e.Rank))
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.RankingLineFormat, entry.Rank, entry.CompanyName, entry.Revenue));
+        }
+
         ConsoleUI.WriteInfo(ClientResources.GameOverMessage);
 
         _gameEndedSignal.TrySetResult();
