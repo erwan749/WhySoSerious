@@ -1,6 +1,7 @@
 ﻿using Server.Domain;
 using Server.Domain.Enums;
 using Server.Options;
+using Server.Resources;
 
 namespace Server.Application.Services;
 
@@ -45,7 +46,6 @@ public static class RoundFactory
             Game = game,
             Order = game.Rounds.Count + 1
         };
-
         var companies = game.Companies.ToList();
 
         var usedNames = game.Rounds
@@ -70,7 +70,10 @@ public static class RoundFactory
             usedNames.Add(tender.Name);
             round.Tenders.Add(tender);
         }
-
+        foreach (var training in BuildTrainings(game, options, random))
+        {
+            round.Trainings.Add(training);
+        }
 
         game.Rounds.Add(round);
 
@@ -182,5 +185,35 @@ public static class RoundFactory
 
         return (StarterMinConsultants, StarterMaxConsultants, StarterMinDuration);
     }
+    /// <summary>
+    /// Bâtit une liste de formation parmis les les consultant dans les compagnie,
+    /// Retourne une la liste si il y a les skill concerne et inferieur aux niveau maximum.
+    /// </summary>
+    /// <param name="game"></param>
+    /// <param name="gameOptions"></param>
+    /// <param name="random"></param>
+    /// <returns></returns>
+    private static ICollection<Training> BuildTrainings(Game game, GameOptions options, Random random)
+    {
+        var trainingNumbers = options.TrainingNumberPerPlayer * game.Players.Count;
 
+        return game.Companies
+            .SelectMany(company => company.Staffs)
+            .SelectMany(consultant => consultant.Skills)
+            // Une compétence déjà au maximum chez tout le monde n'intéresserait personne.
+            .Where(consultantSkill => consultantSkill.Level != Level.Expert)
+            .GroupBy(consultantSkill => consultantSkill.Skill)
+            .Select(group => group.Key)
+            .OrderBy(_ => random.Next())
+            // Take ne lève pas si la partie compte moins de compétences que demandé.
+            .Take(trainingNumbers)
+            .Select(skill => new Training
+            {
+                Name = string.Format(ServerResources.TrainingNameFormat, skill.Name),
+                Skill = skill,
+                Cost = options.TrainingBaseCost,
+                RoundsNumber = options.TrainingRoundsNumber
+            })
+            .ToList();
+    }
 }

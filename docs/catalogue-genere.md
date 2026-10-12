@@ -58,6 +58,26 @@ La durée est plafonnée à 4 tours, et toujours au nombre de tours restants.
 | `src/SeriousGame.Server/Application/Mapper.cs` | `ResolveStatus` s'appuie sur la règle du domaine |
 | `tests/SeriousGame.UnitTests/RoundFactoryTests.cs` | Nouveau : 7 tests déterministes (`new Random(42)`) |
 
+## Formations du tour 
+
+Les formations sont tirées comme les appels d'offres : à partir de ce qui existe dans la partie,
+jamais d'un référentiel figé. Une formation ne porte que sur une compétence **détenue par au
+moins un consultant** et dont ce détenteur n'est pas déjà `Expert` — sinon elle ne trouverait
+preneur chez personne.
+```
+GameFlowService.CreateRound (sous lock (game))
+        │
+        ▼
+        └─ BuildTrainings(game, options, random)
+          │
+          ├─ compétences de tous les consultants de toutes les entreprises
+          ├─ celles dont un détenteur n'est pas Expert
+          ├─ dédoublonnées par Skill (deux détenteurs = une seule formation)
+          ├─ mélangées, puis TrainingNumberPerPlayer × nombre de joueurs
+          └─ nom via ServerResources.TrainingNameFormat, coût et durée depuis GameOptions
+```
+Contrairement aux appels d'offres, aucune entreprise de référence : le tirage regarde toute la
+partie d'un coup, et n'importe qui peut s'inscrire — sous réserve de la règle ci-dessous.
 ## Décisions de conception
 
 - **Le catalogue est généré, pas saisi.** C'est ce qui garantit qu'un appel d'offres est
@@ -74,11 +94,20 @@ La durée est plafonnée à 4 tours, et toujours au nombre de tours restants.
   reproductible en test avec `new Random(42)`.
 - **Appelée sous `lock (game)`** : `RoundFactory` lit le staff et écrit dans `game.Rounds`.
   Deux joueurs agissant au même instant ne peuvent pas générer deux catalogues pour un tour.
+- **La formation spécialise, le recrutement diversifiera.** `LevelUp` fait monter une compétence
+  d'un cran ; rien n'en accorde de nouvelle, et c'est assumé : une entreprise approfondit ce
+  qu'elle sait faire, et devra recruter (US24) pour s'ouvrir à autre chose. Le joueur a ainsi
+  deux leviers distincts plutôt qu'un seul.
+- **La règle est appliquée à l'inscription, pas seulement au tirage.** `TrainingEnrollmentValidator`
+  refuse un consultant qui ne possède pas la compétence enseignée, ou qui y est déjà `Expert` :
+  sans ce contrôle, un joueur paierait une formation et immobiliserait un consultant pour un
+  `LevelUp` qui ne trouverait rien à faire monter.
 
 ## Limites connues / suite possible
 
-- Les **formations** ne sont pas encore générées (US25) : la collection `Trainings` d'un tour
-  reste vide, et l'US08 (inscrire un consultant en formation) n'a rien à proposer d'ici là.
+- Une compétence ne s'acquiert jamais en cours de partie : si aucun consultant ne connaît React,
+  aucune formation React ne sera proposée, et l'entreprise restera enfermée dans les compétences
+  de son staff de départ jusqu'à ce que le recrutement existe .
 - Une entreprise dont tous les consultants sont occupés ne produit aucun appel d'offres. Un
   tour peut donc être vide — ce n'est pas une erreur, mais le client doit l'afficher
   proprement (US12).

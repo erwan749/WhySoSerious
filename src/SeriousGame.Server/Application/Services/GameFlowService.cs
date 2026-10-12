@@ -228,7 +228,7 @@ public class GameFlowService : IGameFlowService
 
         if (!everyoneSubmitted) return;
 
-        // TODO US13-US16 : attribution des appels d'offres, avancement des contrats et formations,
+        // TODO : attribution des appels d'offres, avancement des contrats et formations,
         // salaires, puis bilan réel du tour.
         var result = new RoundResultDto
         {
@@ -240,8 +240,11 @@ public class GameFlowService : IGameFlowService
 
         if (game.Rounds.Count >= game.RoundsNumber)
         {
-            // TODO US17 : classement réel par chiffre d'affaires.
-            await _hubContext.Clients.Group(game.Id).GameEnded(new RankingDto());
+            var ranking = RankingBuilder.Build(game.Companies);
+            
+            await _hubContext.Clients.Group(game.Id).GameEnded(ranking); //permet d'envoyer en broadcast SignalR à toute la game.Id et non seulement au joueur qui terminé en premier 
+
+            _gameService.EndGame(game);
             return;
         }
 
