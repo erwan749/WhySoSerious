@@ -55,6 +55,7 @@ public class GameLoop
         {
             UnsubscribeFromGameEvents();
             await _gameServices.DisconnectAsync();
+            _session.LeaveCurrentGame();
         }
     }
 
