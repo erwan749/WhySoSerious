@@ -20,6 +20,8 @@ builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<PlayerService>();
 builder.Services.AddScoped<ILobbyFlowService, LobbyFlowService>();
 builder.Services.AddScoped<IGameFlowService, GameFlowService>();
+builder.Services.AddSingleton<IAwardStrategy, BestCoverageAwardStrategy>();
+builder.Services.AddScoped<RoundResolver>();
 
 WebApplication app = builder.Build();
 

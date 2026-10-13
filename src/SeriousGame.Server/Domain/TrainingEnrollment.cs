@@ -15,4 +15,5 @@ public class TrainingEnrollment : BaseModel
     public required Training Training { get; init; }
     public int RemainingRounds { get; set; }
     public EnrollmentStatus Status { get; set; } = EnrollmentStatus.InProgress;
+    public required int StartedAtRound {  get; set; }
 }

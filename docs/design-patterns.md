@@ -58,6 +58,12 @@ SignalR en est une seconde incarnation, distribuée : le serveur publie (`Client
 
 **Rôle** : chaque cas d'usage (create/join/leave/disconnect) vit en un seul endroit derrière une interface, au lieu d'être éparpillé dans les hubs (côté serveur) ou mêlé à l'E/S console (côté client).
 
+### Strategy (comportemental)
+
+**Où** : `IAwardStrategy` / `BestCoverageAwardStrategy` (Server), injectée dans `RoundResolver`.
+
+**Rôle** : isole le critère d'attribution d'un appel d'offres — meilleure couverture, moins-disant, premier arrivé — derrière une interface. Le `RoundResolver` sait qu'une candidature gagne, pas pourquoi : il demande, applique les statuts et crée le contrat. Changer de critère revient à écrire une classe et à modifier une ligne du composition root, sans toucher ni au resolver ni aux règles d'éligibilité, qui vivent à part dans `TenderCoverage`. C'est le pattern exigé par le backlog pour cette US, précisément parce que le critère est une décision client encore ouverte.
+
 ## Idiomes .NET
 
 ### Options pattern *(idiome .NET)*

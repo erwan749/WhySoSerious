@@ -127,4 +127,47 @@ public static class Mapper
         SalaryRequirement = candidate.SalaryRequirement,
         Skills = candidate.Skills.Select(ToDto).ToList()
     };
+    /// <summary>
+    /// Projette une formation qui vient de s'achever : le consultant concerné et la compétence qui
+    /// a monté d'un cran. La compétence est lue sur la formation, pas sur le consultant — ce dernier
+    /// en possède plusieurs et rien n'y indique laquelle vient d'évoluer.
+    /// </summary>
+    public static TrainingOutcomeDto ToDto(TrainingEnrollment enrollment) => new()
+    {
+        ConsultantId = enrollment.Consultant.Id,
+        ConsultantFullName = enrollment.Consultant.FullName,
+        SkillName = enrollment.Training.Skill.Name
+    };
+    /// <summary>
+    /// Projette l'issue d'un appel d'offres. <paramref name="winner"/> vaut <c>null</c> quand
+    /// personne ne l'a emporté : aucun candidat, ou aucun candidat admissible. L'appel d'offres
+    /// figure quand même au bilan — un marché resté désert est une information de jeu.
+    /// </summary>
+    private static TenderOutcomeDto ToOutcomeDto(Tender tender, TenderApplication? winner) => new()
+    {
+        TenderId = tender.Id,
+        TenderName = tender.Name,
+        WinningCompanyId = winner?.Company.Id
+    };
+    /// <summary>
+    /// Assemble le bilan d'un tour résolu : l'issue de chaque appel d'offres, les formations qui
+    /// viennent de s'achever et l'état à jour des entreprises. Les formations sont passées en
+    /// paramètre plutôt que relues sur l'état : une inscription clôturée ne garde pas trace du tour
+    /// où elle s'est terminée.
+    /// </summary>
+    public static RoundResultDto ToResultDto(
+        Round round,
+        IReadOnlyList<TrainingEnrollment> completedTrainings) => new()
+        {
+            RoundId = round.Id,
+            RoundOrder = round.Order,
+            TenderOutcomes = round.Tenders
+            .Select(tender => ToOutcomeDto(
+                tender,
+                round.Applications.FirstOrDefault(application =>
+                    application.Tender == tender && application.Status == ApplicationStatus.Won)))
+            .ToList(),
+            CompletedTrainings = completedTrainings.Select(ToDto).ToList(),
+            Companies = round.Game.Companies.Select(ToDto).ToList()
+        };
 }

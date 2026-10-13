@@ -393,7 +393,7 @@ Games available:
   <data name="CandidatesSectionHeader" xml:space="preserve">
     <value>Recruitment</value>
   </data>
-  <data name="Recruitment" xml:space="preserve">
+  <data name="NoCandidatesMessage" xml:space="preserve">
     <value>No candidates available this round.</value>
   </data>
   <data name="CandidateDetailFormat" xml:space="preserve">
@@ -407,5 +407,20 @@ Games available:
   </data>
   <data name="RecruitmentDecisionSummaryFormat" xml:space="preserve">
     <value>Recruit {0} ({1} € / month)</value>
+  </data>
+  <data name="RoundResultHeaderFormat" xml:space="preserve">
+    <value>Round {0} results</value>
+  </data>
+  <data name="TenderOutcomeWonFormat" xml:space="preserve">
+    <value>- {0} - won by {1}</value>
+  </data>
+  <data name="TenderOutcomeNoWinnerFormat" xml:space="preserve">
+    <value>- {0} - no winner</value>
+  </data>
+  <data name="TrainingOutcomeFormat" xml:space="preserve">
+    <value>- {0} leveled up : {1}</value>
+  </data>
+  <data name="NoCompletedTrainingMessage" xml:space="preserve">
+    <value>No training completed this round.</value>
   </data>
 </root>
