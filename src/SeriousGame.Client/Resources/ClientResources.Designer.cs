@@ -88,6 +88,33 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à You want to recruit {0}..
+        /// </summary>
+        internal static string CandidateChosenMessage {
+            get {
+                return ResourceManager.GetString("CandidateChosenMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0}. {1} - {2} € / month.
+        /// </summary>
+        internal static string CandidateDetailFormat {
+            get {
+                return ResourceManager.GetString("CandidateDetailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Recruitment.
+        /// </summary>
+        internal static string CandidatesSectionHeader {
+            get {
+                return ResourceManager.GetString("CandidatesSectionHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Cannot invoke &apos;{0}&apos;: connection state = {1}.
         /// </summary>
         internal static string CannotInvokeError {
@@ -291,7 +318,7 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Thanks for playing! (final scoring not implemented yet).
+        ///   Recherche une chaîne localisée semblable à Thanks for playing !.
         /// </summary>
         internal static string GameOverMessage {
             get {
@@ -455,11 +482,29 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à No candidates available this round..
+        /// </summary>
+        internal static string NoCandidatesMessage {
+            get {
+                return ResourceManager.GetString("NoCandidatesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à No Company found.
         /// </summary>
         internal static string NoCompanyError {
             get {
                 return ResourceManager.GetString("NoCompanyError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à No training completed this round..
+        /// </summary>
+        internal static string NoCompletedTrainingMessage {
+            get {
+                return ResourceManager.GetString("NoCompletedTrainingMessage", resourceCulture);
             }
         }
         
@@ -572,6 +617,15 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à #{0} — {1} ({2} revenue).
+        /// </summary>
+        internal static string RankingLineFormat {
+            get {
+                return ResourceManager.GetString("RankingLineFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à 🔗 Reconnected!.
         /// </summary>
         internal static string ReconnectedMessage {
@@ -586,6 +640,24 @@ namespace Client.Resources {
         internal static string ReconnectingWarning {
             get {
                 return ResourceManager.GetString("ReconnectingWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Which candidate do you want to recruit? (number, or press Enter to skip).
+        /// </summary>
+        internal static string RecruitCandidatePrompt {
+            get {
+                return ResourceManager.GetString("RecruitCandidatePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Recruit {0} ({1} € / month).
+        /// </summary>
+        internal static string RecruitmentDecisionSummaryFormat {
+            get {
+                return ResourceManager.GetString("RecruitmentDecisionSummaryFormat", resourceCulture);
             }
         }
         
@@ -623,6 +695,15 @@ namespace Client.Resources {
         internal static string RoundHeaderFormat {
             get {
                 return ResourceManager.GetString("RoundHeaderFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Round {0} results.
+        /// </summary>
+        internal static string RoundResultHeaderFormat {
+            get {
+                return ResourceManager.GetString("RoundResultHeaderFormat", resourceCulture);
             }
         }
         
@@ -744,6 +825,24 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à - {0} - no winner.
+        /// </summary>
+        internal static string TenderOutcomeNoWinnerFormat {
+            get {
+                return ResourceManager.GetString("TenderOutcomeNoWinnerFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à - {0} - won by {1}.
+        /// </summary>
+        internal static string TenderOutcomeWonFormat {
+            get {
+                return ResourceManager.GetString("TenderOutcomeWonFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à    Required: {0}.
         /// </summary>
         internal static string TenderRequiredSkillsFormat {
@@ -771,11 +870,20 @@ namespace Client.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à {0}. {1} - {2} - {3} € - {4} round(s).
+        ///   Recherche une chaîne localisée semblable à {0}. {1} -  {2} € - {3} round(s).
         /// </summary>
         internal static string TrainingDetailFormat {
             get {
                 return ResourceManager.GetString("TrainingDetailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à - {0} leveled up : {1}.
+        /// </summary>
+        internal static string TrainingOutcomeFormat {
+            get {
+                return ResourceManager.GetString("TrainingOutcomeFormat", resourceCulture);
             }
         }
         

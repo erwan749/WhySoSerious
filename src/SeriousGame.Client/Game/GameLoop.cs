@@ -55,6 +55,7 @@ public class GameLoop
         {
             UnsubscribeFromGameEvents();
             await _gameServices.DisconnectAsync();
+            _session.LeaveCurrentGame();
         }
     }
 
@@ -132,6 +133,7 @@ public class GameLoop
 
     await RunTenderApplicationStepAsync(round);
     await RunTrainingEnrollmentStepAsync(round);
+    await RunRecruitmentStepAsync(round);
 }
 
     private async Task RunTenderApplicationStepAsync(RoundDto round)
@@ -200,18 +202,6 @@ public class GameLoop
 
         var trainings = round.Trainings.ToList();
 
-        // TODO US25 : à retirer quand l'écran marché listera les formations générées.
-        for (var i = 0; i < trainings.Count; i++)
-        {
-            ConsoleUI.WriteInfo(string.Format(
-                ClientResources.TrainingDetailFormat,
-                i + 1,
-                trainings[i].Name,
-                trainings[i].Skill.Name,
-                trainings[i].Cost,
-                trainings[i].RoundsNumber));
-        }
-
         var trainingIndex = ReadIndex(ClientResources.EnrollInTrainingPrompt, trainings.Count);
         if (trainingIndex is null) return;
 
@@ -257,6 +247,30 @@ public class GameLoop
         }
     }
 
+    private Task RunRecruitmentStepAsync(RoundDto round)
+    {
+        if (round.Candidates.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoCandidatesMessage);
+            return Task.CompletedTask;
+        }
+
+        var candidates = round.Candidates.ToList();
+
+        var candidateIndex = ReadIndex(ClientResources.RecruitCandidatePrompt, candidates.Count);
+        if (candidateIndex is null) return Task.CompletedTask;
+
+        var candidate = candidates[candidateIndex.Value];
+
+        ConsoleUI.WriteInfo(string.Format(ClientResources.CandidateChosenMessage, candidate.FullName));
+        _roundDecisions.Add(string.Format(
+            ClientResources.RecruitmentDecisionSummaryFormat,
+            candidate.FullName,
+            candidate.SalaryRequirement));
+
+        return Task.CompletedTask;
+    }
+    
     private List<ConsultantDto> GetFreeConsultants() =>
         _session.MyCompany?.Staff.Where(c => c.Status == ConsultantStatus.Free).ToList() ?? [];
 
@@ -265,16 +279,79 @@ public class GameLoop
         ConsoleUI.WriteInfo(string.Format(ClientResources.PlayerSubmittedFormat, nickname));
     }
 
-    private static void OnRoundResolved(RoundResultDto result)
+    private void OnRoundResolved(RoundResultDto result)
     {
-        // TODO US16 : bilan réel du tour (contrats gagnés/perdus, trésorerie, classement).
-        ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Resolution));
+        var myCompany = result.Companies.FirstOrDefault(c => c.OwnerId == _session.PlayerId);
+
+        if (myCompany is not null) _session.SetMyCompany(myCompany);
+        ShowRoundResultScreen(result);
+    }
+
+    private void ShowRoundResultScreen(RoundResultDto result)
+    {
+        ConsoleUI.WriteHeader(string.Format(ClientResources.RoundResultHeaderFormat, result.RoundOrder));
+
+        // Annuaire construit une fois : le bilan ne transporte que l'identifiant du gagnant,
+        // le nom se trouve dans la liste des entreprises.
+        var companyNames = result.Companies.ToDictionary(company => company.Id, company => company.Name);
+
+        ConsoleUI.WriteInfo(ClientResources.TendersSectionHeader);
+
+        foreach (var outcome in result.TenderOutcomes)
+        {
+            if (outcome.WinningCompanyId is not null
+                && companyNames.TryGetValue(outcome.WinningCompanyId, out var winnerName))
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TenderOutcomeWonFormat, outcome.TenderName, winnerName));
+            }
+            else
+            {
+                // Aucun candidat, ou aucun candidat admissible : l'appel d'offres reste au bilan.
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TenderOutcomeNoWinnerFormat, outcome.TenderName));
+            }
+        }
+
+        ConsoleUI.WriteInfo(ClientResources.TrainingsSectionHeader);
+
+        // Le bilan porte les formations de tous les joueurs : on ne garde que les siennes,
+        // le nom d'un consultant adverse n'étant pas exploitable côté joueur.
+        var myConsultantIds = _session.MyCompany?.Staff.Select(consultant => consultant.Id).ToHashSet() ?? [];
+
+        var myTrainings = result.CompletedTrainings
+            .Where(training => myConsultantIds.Contains(training.ConsultantId))
+            .ToList();
+
+        if (myTrainings.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoCompletedTrainingMessage);
+        }
+        else
+        {
+            foreach (var training in myTrainings)
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TrainingOutcomeFormat, training.ConsultantFullName, training.SkillName));
+            }
+        }
+
+        if (_session.MyCompany is null) return;
+
+        ConsoleUI.WriteInfo(string.Format(ClientResources.TreasuryFormat, _session.MyCompany.Treasury));
+        ConsoleUI.WriteInfo(string.Format(ClientResources.RevenueFormat, _session.MyCompany.Revenue));
     }
 
     private void OnGameEnded(RankingDto ranking)
     {
-        // TODO US17 : affichage du classement final.
+        
         ConsoleUI.WriteHeader(ClientResources.GameOverHeader);
+
+        foreach (var entry in ranking.Entries.OrderBy(e => e.Rank))
+        {
+            ConsoleUI.WriteInfo(string.Format(ClientResources.RankingLineFormat, entry.Rank, entry.CompanyName, entry.Revenue));
+        }
+
         ConsoleUI.WriteInfo(ClientResources.GameOverMessage);
 
         _gameEndedSignal.TrySetResult();
@@ -335,11 +412,14 @@ public class GameLoop
     /// Affiche le catalogue du tour — appels d'offres et formations — puis attend que le joueur ait
     /// lu. N'appelle pas le serveur : tout vient du RoundDto reçu avec RoundStarted.
     /// </summary>
-    private void ShowMarketScreen(RoundDto round)
+    private static void ShowMarketScreen(RoundDto round)
     {
         ConsoleUI.WriteHeader(ClientResources.MarketHeader);
-        ConsoleUI.WriteHeader(ClientResources.TendersSectionHeader);
-        if(round.Tenders.Count == 0)
+
+        ConsoleUI.WriteInfo(ClientResources.TendersSectionHeader);
+        Console.WriteLine();
+
+        if (round.Tenders.Count == 0)
         {
             ConsoleUI.WriteInfo(ClientResources.NoTendersMessage);
         }
@@ -347,8 +427,8 @@ public class GameLoop
         {
             var number = 1;
 
-            foreach (var tender in round.Tenders) 
-            { 
+            foreach (var tender in round.Tenders)
+            {
                 ConsoleUI.WriteInfo(string.Format(
                     ClientResources.TenderDetailFormat,
                     number,
@@ -357,7 +437,6 @@ public class GameLoop
                     tender.RoundsNumber,
                     tender.RequiredConsultants));
 
-
                 ConsoleUI.WriteInfo(string.Format(
                     ClientResources.TenderRequiredSkillsFormat,
                     FormatRequiredSkills(tender.RequiredSkills)));
@@ -365,8 +444,63 @@ public class GameLoop
                 number++;
             }
         }
-        //TODO Training
+        Console.WriteLine();
+        ConsoleUI.WriteInfo(ClientResources.TrainingsSectionHeader);
+        Console.WriteLine();
 
+        if (round.Trainings.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoTrainingsMessage);
+        }
+        else
+        {
+            var number = 1;
+
+            foreach (var training in round.Trainings)
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TrainingDetailFormat,
+                    number,
+                    training.Name,
+                    training.Cost,
+                    training.RoundsNumber));
+
+                number++;
+            }
+            
+        }
+        
+        Console.WriteLine();
+        ConsoleUI.WriteInfo(ClientResources.CandidatesSectionHeader);
+        Console.WriteLine();
+
+        if (round.Candidates.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoCandidatesMessage);
+        }
+        else
+        {
+            var number = 1;
+
+            foreach (var candidate in round.Candidates)
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.CandidateDetailFormat,
+                    number,
+                    candidate.FullName,
+                    candidate.SalaryRequirement));
+
+                var skillsLabel = candidate.Skills.Count > 0
+                    ? string.Join(", ", candidate.Skills.Select(s =>
+                        string.Format(ClientResources.SkillWithLevelFormat, s.Skill.Name, s.Level)))
+                    : ClientResources.NoSkillsLabel;
+
+                ConsoleUI.WriteInfo($"   {string.Format(ClientResources.ConsultantSkillsFormat, skillsLabel)}");
+
+                number++;
+            }
+        }
+        Console.WriteLine();
         ConsoleUI.WritePrompt(ClientResources.PressEnterToContinuePrompt);
         Console.ReadLine();
     }

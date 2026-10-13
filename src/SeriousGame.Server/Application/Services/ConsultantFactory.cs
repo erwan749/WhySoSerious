@@ -41,6 +41,22 @@ public static class ConsultantFactory
         }
     }
 
+    public static List<ConsultantSkill> DrawSkills(IReadOnlyList<Skill> skillCatalog, Random random)
+    {
+        var skillCount = random.Next(MinSkillsPerConsultant, MaxSkillsPerConsultant + 1);
+        var drawn = new List<ConsultantSkill>();
+
+        foreach (var skill in skillCatalog.OrderBy(_ => random.Next()).Take(skillCount))
+        {
+            var consultantSkill = new ConsultantSkill { Skill = skill };
+            var levelUps = random.Next(MinLevelUpOnStart, MaxLevelUpOnStart + 1);
+            for (var i = 0; i < levelUps; i++) consultantSkill.LevelUp();
+            drawn.Add(consultantSkill);
+        }
+
+        return drawn;
+    }
+
     public static Consultant CreateFromSeed(ConsultantSeed seed, IReadOnlyList<Skill> skillCatalog, Company company, Random random)
     {
         var consultant = new Consultant
@@ -50,23 +66,19 @@ public static class ConsultantFactory
             Company = company
         };
 
-        consultant.SetSalaryRequirement(random.Next(MinSalaryStep, MaxSalaryStep + 1) * 100);
+        consultant.SetSalaryRequirement(DrawSalary(random));
 
         var skillCount = random.Next(MinSkillsPerConsultant, MaxSkillsPerConsultant + 1);
         var randomSkills = skillCatalog.OrderBy(_ => random.Next()).Take(skillCount);
 
-        foreach (var skill in randomSkills)
+        foreach (var consultantSkill in DrawSkills(skillCatalog, random))
         {
-            var cSkill = new ConsultantSkill { Skill = skill };
-            var randomLevel = random.Next(MinLevelUpOnStart, MaxLevelUpOnStart + 1);
-            for (var i = 0; i < randomLevel; i++)
-            {
-                cSkill.LevelUp();
-            }
-            consultant.Skills.Add(cSkill);
-
+            consultant.Skills.Add(consultantSkill);
         }
 
         return consultant;
     }
+    
+    public static int DrawSalary(Random random) =>
+        random.Next(MinSalaryStep, MaxSalaryStep + 1) * 100;
 }

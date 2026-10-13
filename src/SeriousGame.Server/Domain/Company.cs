@@ -12,6 +12,7 @@ public class Company : BaseModel
     public int Treasury { get; private set; }
     public int Revenue { get; private set; }
     public ICollection<Consultant> Staffs { get; } = [];
+    public bool IsBankrupt { get; private set; }
 
     /// <summary>Trésorerie de départ, fixée une seule fois à la création de l'entreprise.</summary>
     public required int InitialTreasury
@@ -59,5 +60,19 @@ public class Company : BaseModel
     /// <summary>Consultants du staff mobilisables ce tour : ni en mission, ni en formation.</summary>
     public IReadOnlyList<Consultant> GetAvailableConsultants() =>
         Staffs.Where(consultant => !IsConsultantBusy(consultant)).ToList();
+
+    public int GetPayroll() => Staffs.Sum(s => s.SalaryRequirement);
+    private void Bankrupt() => IsBankrupt = true;
+
+    /// <summary>
+    /// Prélève la masse salariale du tour sur la trésorerie. Si celle-ci passe dans le rouge,
+    /// l'entreprise est déclarée en faillite : un état définitif, qu'un encaissement ultérieur
+    /// n'annule pas.
+    /// </summary>
+    public void RecordSalaryPayment()
+    {
+        Withdraw(GetPayroll());
+        if (Treasury < 0) Bankrupt();
+    }
 
 }

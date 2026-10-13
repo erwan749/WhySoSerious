@@ -92,7 +92,8 @@ public class TenderApplicationValidatorTests
             Company = company,
             Consultant = consultant,
             Training = training,
-            Status = EnrollmentStatus.InProgress
+            Status = EnrollmentStatus.InProgress,
+            StartedAtRound = round.Order
         });
 
         var result = TenderApplicationValidator.Validate(round, company, tender, [consultant]);

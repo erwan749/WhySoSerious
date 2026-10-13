@@ -17,5 +17,6 @@ Pages par fonctionnalité, dans l'ordre où elles ont été développées :
 - **[feature-1.md](feature-1.md)** — …
 - **[staff-inita.md](staff-inita.md)** — staff initial de consultants (US05).
 - **[catalogue-genere.md](catalogue-genere.md)** — catalogue généré du tour (US11).
+- **[resolution-tour.md](resolution-tour.md)** — Résolution du tour
 
 Pour les commandes build/run/test, voir le [README racine](../README.md).

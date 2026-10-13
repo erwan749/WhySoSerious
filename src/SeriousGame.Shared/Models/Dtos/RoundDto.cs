@@ -7,4 +7,5 @@ public class RoundDto
     public required int TotalRounds { get; init; }
     public ICollection<TenderDto> Tenders { get; init; } = [];
     public ICollection<TrainingDto> Trainings { get; init; } = [];
+    public ICollection<CandidateDto> Candidates { get; init; } = [];
 }

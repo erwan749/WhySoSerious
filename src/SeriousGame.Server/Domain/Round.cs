@@ -11,6 +11,8 @@ public class Round :  BaseModel
     // Catalogue proposé ce tour.
     public ICollection<Tender> Tenders { get; init; } = [];
     public ICollection<Training> Trainings { get; init; } = [];
+    
+    public ICollection<Candidate> Candidates { get; init; } = [];
 
     // Décisions des entreprises ce tour, résolues en Won/Lost au calcul de tour.
     public ICollection<TenderApplication> Applications { get; init; } = [];

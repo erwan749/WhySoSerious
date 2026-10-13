@@ -20,6 +20,7 @@ public class GameFlowService : IGameFlowService
     private readonly ILogger<GameFlowService> _logger;
     private readonly GameOptions _gameOptions;
     private readonly AppMemory _appMemory;
+    private readonly RoundResolver _roundResolver;
 
     public GameFlowService(
         GameService gameService,
@@ -27,7 +28,8 @@ public class GameFlowService : IGameFlowService
         IHubContext<GameHub, IGameHubClient> hubContext,
         ILogger<GameFlowService> logger,
         IOptions<GameOptions> gameOptions,
-        AppMemory appMemory)
+        AppMemory appMemory,
+        RoundResolver roundResolver)
     {
         _gameService = gameService;
         _playerService = playerService;
@@ -35,6 +37,7 @@ public class GameFlowService : IGameFlowService
         _logger = logger;
         _gameOptions = gameOptions.Value;
         _appMemory = appMemory;
+        _roundResolver = roundResolver;
     }
 
     public Task<CommandResult> ApplyToTender(ApplyToTenderCommand command)
@@ -112,7 +115,8 @@ public class GameFlowService : IGameFlowService
                 Company = company,
                 Consultant = consultant,
                 Training = training,
-                RemainingRounds = training.RoundsNumber
+                RemainingRounds = training.RoundsNumber,
+                StartedAtRound = round.Order
             });
         }
 
@@ -201,6 +205,7 @@ public class GameFlowService : IGameFlowService
         }
 
         bool everyoneSubmitted;
+        RoundResultDto? result = null;
 
         lock (game)
         {
@@ -211,27 +216,33 @@ public class GameFlowService : IGameFlowService
 
             // Marqué tout de suite dans le verrou : deux soumissions simultanées ne doivent pas
             // résoudre le tour deux fois.
-            if (everyoneSubmitted) round.IsCompleted = true;
+            if (everyoneSubmitted)
+            {
+                round.IsCompleted = true;
+
+                var completedTrainings = _roundResolver.AdvanceContractsAndTrainings(game, round);
+                _roundResolver.ResolveTenders(round);
+                _roundResolver.PayDaysForStaffs(game);
+
+                // Dans le verrou : le bilan lit la trésorerie et le statut des consultants de
+                // toutes les entreprises, il doit en voir un état cohérent.
+                result = Mapper.ToResultDto(round, completedTrainings);
+            }
         }
 
         await _hubContext.Clients.Group(game.Id).PlayerSubmitted(player.Nickname);
 
-        if (!everyoneSubmitted) return;
-
-        // TODO US13-US16 : attribution des appels d'offres, avancement des contrats et formations,
-        // salaires, puis bilan réel du tour.
-        var result = new RoundResultDto
-        {
-            RoundId = round.Id,
-            RoundOrder = round.Order
-        };
+        if (result is null) return;
 
         await _hubContext.Clients.Group(game.Id).RoundResolved(result);
 
         if (game.Rounds.Count >= game.RoundsNumber)
         {
-            // TODO US17 : classement réel par chiffre d'affaires.
-            await _hubContext.Clients.Group(game.Id).GameEnded(new RankingDto());
+            var ranking = RankingBuilder.Build(game.Companies);
+            
+            await _hubContext.Clients.Group(game.Id).GameEnded(ranking); //permet d'envoyer en broadcast SignalR à toute la game.Id et non seulement au joueur qui terminé en premier 
+
+            _gameService.EndGame(game);
             return;
         }
 
@@ -248,7 +259,18 @@ public class GameFlowService : IGameFlowService
     /// delegue la construction du catalogue a RoundFactory
     /// </summary>
 
-    private Round CreateRound(Game game) => RoundFactory.Create(game, _appMemory.TenderSeeds, _gameOptions, Random.Shared);
+    private Round CreateRound(Game game)
+    {
+        var round = RoundFactory.Create(game, _appMemory.TenderSeeds, _gameOptions, Random.Shared);
+
+        foreach (var candidate in CandidateFactory.Build(
+                     game, _appMemory.CandidateSeeds, _appMemory.Skills, _gameOptions, Random.Shared))
+        {
+            round.Candidates.Add(candidate);
+        }
+
+        return round;
+    }
 
     private Task StartRound(Game game, Round round)
     {
