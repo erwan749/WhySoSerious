@@ -151,3 +151,66 @@ reflètent pas encore ces évolutions : le client garde l'instantané
 `CompanyDto` reçu au `GameStarted`, et `RoundResultDto` est encore envoyé
 vide. Le classement final, construit côté serveur, est quant à lui juste.
 La mise à jour du bilan en cours de partie est le périmètre de l'**US16**.
+
+## Paiement des salaires (US15)
+
+### Place dans la résolution
+
+Le prélèvement est la troisième et dernière étape de la résolution d'un tour :
+
+1. avancement des contrats et formations
+2. attribution des appels d'offres
+3. **paiement des salaires**
+4. envoi du bilan
+
+L'ordre est voulu : un contrat qui s'achève a déjà versé son budget quand le
+prélèvement a lieu. L'inverse ferait tomber une entreprise dans le rouge le
+tour même où un contrat l'a payée.
+
+### Règle
+
+Chaque entreprise paie, à chaque tour, le salaire de **tout** son staff —
+en mission, en formation ou sur le banc. C'est le contrepoids économique du
+jeu : un consultant inoccupé coûte autant qu'un consultant productif, donc il
+faut le placer.
+
+Le salaire n'est pas une constante de configuration : il est porté par le
+consultant (`Consultant.SalaryRequirement`), tiré entre 3 000 € et 5 000 € par
+`ConsultantFactory` à la création de la partie. La masse salariale d'une
+entreprise est donc dérivée à la demande par `Company.GetPayroll()`, jamais
+stockée — un champ stocké devrait être maintenu à chaque recrutement (US24)
+et à chaque licenciement.
+
+### Faillite
+
+Si la trésorerie passe sous zéro après le prélèvement, l'entreprise est
+déclarée en faillite via `Company.IsBankrupt`. Deux choix de conception :
+
+- **la trésorerie n'est pas bornée à zéro** : elle devient négative, ce qui
+  rend l'ampleur du déficit visible dans les journaux ;
+- **la faillite est définitive** : un encaissement ultérieur ne relève pas
+  l'entreprise. C'est un événement, pas un état transitoire — sinon le
+  classement final dépendrait de l'ordre des opérations du dernier tour.
+
+Le drapeau est levé par `Company.RecordSalaryPayment()` elle-même, pas par le
+service appelant : la règle « faillite = trésorerie négative après paiement »
+appartient au domaine, comme l'écriture de la trésorerie, dont le `set` reste
+privé.
+
+### Conséquence de jeu : non implémentée
+
+Lever le drapeau n'a, à ce stade, **aucun effet sur le déroulement de la
+partie**. L'entreprise en faillite continue de jouer, et le classement final
+reste trié sur le seul chiffre d'affaires.
+
+La règle retenue avec le client est : une entreprise en faillite est éliminée,
+et la partie s'arrête quand il reste moins de deux entreprises solvables — à
+deux joueurs, une faillite met donc fin à la partie immédiatement. Cette règle
+est le périmètre de l'**US26**, sortie de l'US15 parce qu'elle touche la
+boucle de tour, la condition de fin de partie, le critère de tri du classement
+et le client.
+
+Un point d'attention pour l'US26 : la condition de résolution d'un tour
+compare `round.SubmittedPlayerIds.Count` à `game.Players.Count`. Un joueur
+éliminé ne soumettant plus, le dénominateur devra devenir le nombre de joueurs
+encore en jeu, sans quoi la partie se figerait sans erreur visible.

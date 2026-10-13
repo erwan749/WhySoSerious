@@ -106,4 +106,32 @@ public class RoundResolver
             }
         }
     }
+    /// <summary>
+    /// Prélève la masse salariale de chaque entreprise de la partie. Les salaires sont dus pour
+    /// tout le staff, qu'il soit en mission, en formation ou sur le banc : c'est ce qui rend
+    /// coûteux un consultant inoccupé.
+    /// </summary>
+    public void PayDaysForStaffs(Game game)
+    {
+        foreach (Company company in game.Companies)
+        {
+            var wasBankrupt = company.IsBankrupt;
+            var payroll = company.GetPayroll();
+
+            company.RecordSalaryPayment();
+
+            _logger.LogInformation(
+                "Company {CompanyName} paid {Payroll} in salaries, treasury is now {Treasury}",
+                company.Name, payroll, company.Treasury);
+
+            // Journalisé sur la transition, pas sur l'état : sinon l'avertissement se répéterait
+            // à chaque tour jusqu'à la fin de la partie.
+            if (!wasBankrupt && company.IsBankrupt)
+            {
+                _logger.LogWarning(
+                    "Company {CompanyName} went bankrupt: treasury is {Treasury}",
+                    company.Name, company.Treasury);
+            }
+        }
+    }
 }

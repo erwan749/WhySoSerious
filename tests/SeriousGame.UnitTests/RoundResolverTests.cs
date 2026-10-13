@@ -296,4 +296,25 @@ public class RoundResolverTests
         Assert.Equal(0, contract.RemainingRounds);
         Assert.Equal(0, company.Revenue);
     }
+    [Fact]
+    public void PaySalaries_WithdrawsThePayrollOfEveryCompany()
+    {
+        var game = new Game { Name = "G", Owner = MakePlayer() };
+
+        var acme = MakeCompany("Acme");
+        var globex = MakeCompany("Globex");
+        game.Companies.Add(acme);
+        game.Companies.Add(globex);
+
+        MakeConsultant(acme, Level.Basic).SetSalaryRequirement(3_000);
+        MakeConsultant(globex, Level.Basic).SetSalaryRequirement(5_000);
+
+        _resolver.PayDaysForStaffs(game);
+
+        // MakeCompany démarre à 1 000 000 : aucune des deux ne tombe.
+        Assert.Equal(1_000_000 - 3_000, acme.Treasury);
+        Assert.Equal(1_000_000 - 5_000, globex.Treasury);
+        Assert.False(acme.IsBankrupt);
+        Assert.False(globex.IsBankrupt);
+    }
 }

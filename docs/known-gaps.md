@@ -17,3 +17,16 @@ serveur les met bien à jour (confirmé par le classement final).
 
 Correction prévue : US16 (remplir `RoundResultDto.Companies` et appeler
 `SetMyCompany` sur `RoundResolved`).
+
+## Faillite sans conséquence
+
+`Company.IsBankrupt` est levé par le paiement des salaires mais n'a aucun
+effet : pas d'élimination, pas de fin de partie anticipée, et le classement
+final ignore le drapeau. Périmètre de l'US26.
+
+## Trésorerie initiale non équilibrée
+
+`CompanyInitialTreasury` vaut 1 000 000 en production pour 5 tours et une
+masse salariale de l'ordre de 15 000 € par tour : la pression économique est
+nulle et la faillite inatteignable. La valeur de développement (30 000) rend
+la règle observable. À arbitrer avec le client.

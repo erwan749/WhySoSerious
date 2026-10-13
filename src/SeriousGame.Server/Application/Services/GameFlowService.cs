@@ -221,7 +221,7 @@ public class GameFlowService : IGameFlowService
 
                 _roundResolver.AdvanceContractsAndTrainings(game, round);
                 _roundResolver.ResolveTenders(round);
-                // TODO US15 : paiement des salaires.
+                _roundResolver.PayDaysForStaffs(game);
             }
         }
 
