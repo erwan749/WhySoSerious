@@ -43,6 +43,8 @@ public class AppMemory
     // réellement en jeu (voir RoundFactory, US11). Un Seed est un blueprint, jamais une entité réelle.
     public IReadOnlyList<TenderSeed> TenderSeeds { get; }
     public IReadOnlyList<ConsultantSeed> ConsultantsSeed { get; }
+    
+    public IReadOnlyList<ConsultantSeed> CandidateSeeds { get; }
 
     public AppMemory()
     {
@@ -96,6 +98,22 @@ public class AppMemory
             new ConsultantSeed { Firstname = "Victor Hugo", Lastname = "Alves" },
             new ConsultantSeed { Firstname = "Wei", Lastname = "Zhang" },
             new ConsultantSeed { Firstname = "Yasmin", Lastname = "Koné" }
+        ];
+        
+        CandidateSeeds =
+        [
+            new ConsultantSeed { Firstname = "Zoé", Lastname = "Laurent" },
+            new ConsultantSeed { Firstname = "Nolan", Lastname = "Perez" },
+            new ConsultantSeed { Firstname = "Maya", Lastname = "Cohen" },
+            new ConsultantSeed { Firstname = "Ethan", Lastname = "Moreau" },
+            new ConsultantSeed { Firstname = "Sarah", Lastname = "Benali" },
+            new ConsultantSeed { Firstname = "Lucas", Lastname = "Dumas" },
+            new ConsultantSeed { Firstname = "Camille", Lastname = "Girard" },
+            new ConsultantSeed { Firstname = "Ibrahim", Lastname = "Diallo" },
+            new ConsultantSeed { Firstname = "Anaïs", Lastname = "Vidal" },
+            new ConsultantSeed { Firstname = "Mehdi", Lastname = "Karoui" },
+            new ConsultantSeed { Firstname = "Julia", Lastname = "Novak" },
+            new ConsultantSeed { Firstname = "Théo", Lastname = "Bernard" }
         ];
     }
 }
