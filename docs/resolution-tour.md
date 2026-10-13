@@ -214,3 +214,120 @@ Un point d'attention pour l'US26 : la condition de résolution d'un tour
 compare `round.SubmittedPlayerIds.Count` à `game.Players.Count`. Un joueur
 éliminé ne soumettant plus, le dénominateur devra devenir le nombre de joueurs
 encore en jeu, sans quoi la partie se figerait sans erreur visible.
+
+## Le bilan du tour (US16)
+
+### Ce que le bilan transporte
+
+`RoundResultDto` est envoyé à tout le groupe de la partie une fois le tour résolu :
+
+| Champ | Contenu |
+|---|---|
+| `RoundId`, `RoundOrder` | identification du tour |
+| `TenderOutcomes` | pour chaque appel d'offres : son nom, et l'identifiant de l'entreprise gagnante ou `null` |
+| `CompletedTrainings` | les formations achevées à ce tour : consultant et compétence montée |
+| `Companies` | l'état à jour de toutes les entreprises |
+
+Un appel d'offres sans gagnant figure quand même au bilan, avec
+`WinningCompanyId` à `null` : un marché resté désert — aucun candidat, ou aucun
+candidat admissible — est une information de jeu.
+
+### Pourquoi les formations remontent par retour de méthode
+
+Les issues d'appels d'offres sont dérivables de l'état : `round.Applications`
+appartient au tour, et chaque candidature porte `Won` ou `Lost` après
+l'attribution.
+
+Les formations, non. Une inscription vit à travers les tours et son statut
+`Completed` reste vrai jusqu'à la fin de la partie : au tour 4, rien ne
+distingue une formation achevée ce tour-ci d'une achevée au tour 2.
+**L'information se perd au moment où elle est produite.**
+
+Deux solutions étaient possibles : stocker un `CompletedAtRound` sur
+l'inscription, symétrique du `StartedAtRound` existant, ou faire remonter
+l'information par la méthode qui la produit. C'est la seconde qui a été
+retenue : `AdvanceContractsAndTrainings` renvoie désormais les inscriptions
+qu'elle vient de clore, en `IReadOnlyList<TrainingEnrollment>`.
+
+La règle appliquée : **on ne stocke pas dans le domaine une donnée qu'un seul
+appelant consomme immédiatement**. Un champ ajouté pour un unique lecteur
+devient vite un champ dont personne ne sait plus s'il est lu.
+
+Deux détails de cette remontée :
+
+- l'inscription n'est ajoutée que dans la branche où `LevelUp()` est
+  effectivement appelé. Celle dont le consultant n'a plus la compétence est
+  clôturée et journalisée en avertissement, mais pas annoncée : aucune
+  compétence n'a monté, l'annoncer serait faux ;
+- le type de retour est une interface en lecture seule, pour que l'appelant ne
+  puisse pas y ajouter une formation que la résolution n'a pas produite.
+
+### Le mapping
+
+`Mapper` nomme ses conversions `ToDto` et les distingue par le type d'entrée.
+Cette convention tombe en défaut ici : `ToDto(Round)` existe déjà et renvoie un
+`RoundDto`. La règle appliquée est donc : **quand deux conversions partent de la
+même entité, c'est la sortie qui nomme la méthode** — d'où `ToResultDto(Round,
+IReadOnlyList<TrainingEnrollment>)` et le `ToOutcomeDto(Tender,
+TenderApplication?)` privé qu'elle utilise.
+
+Les entreprises ne sont pas un paramètre : `round.Game.Companies` les donne,
+comme `ToDto(Round)` remonte déjà à `round.Game.RoundsNumber`. Les formations,
+elles, doivent en être un — c'est tout l'objet du retour décrit plus haut.
+
+### La construction dans le verrou
+
+Le DTO est assemblé **à l'intérieur** du `lock (game)`, juste après les trois
+étapes de résolution, et seul l'envoi se fait hors verrou :
+
+```csharp
+RoundResultDto? result = null;
+
+lock (game)
+{
+    if (everyoneSubmitted)
+    {
+        var completedTrainings = _roundResolver.AdvanceContractsAndTrainings(game, round);
+        _roundResolver.ResolveTenders(round);
+        _roundResolver.PaySalaries(game);
+
+        result = Mapper.ToResultDto(round, completedTrainings);
+    }
+}
+```
+
+Le mapping lit la trésorerie, le chiffre d'affaires et le statut des
+consultants de toutes les entreprises. Hors verrou, ces lectures pourraient se
+croiser avec une autre soumission et produire un bilan à moitié d'avant, à
+moitié d'après. Le coût est de quelques dizaines d'objets, ce qui n'allonge pas
+sérieusement la section critique.
+
+Le `result` nullable sert aussi de garde : `if (result is null) return;`
+remplace un test sur `everyoneSubmitted`, et le compilateur suit le
+raisonnement sans opérateur `!`.
+
+### Côté client
+
+Avant cette US, le client gardait l'instantané `CompanyDto` reçu au
+`GameStarted` et ne le rafraîchissait jamais : statut des consultants,
+trésorerie et chiffre d'affaires restaient figés à l'écran pendant toute la
+partie, alors que le serveur les mettait bien à jour. `OnRoundResolved` appelle
+désormais `ClientSession.SetMyCompany` avec l'entreprise trouvée dans
+`result.Companies`.
+
+**Une asymétrie assumée** dans l'endroit du filtrage. Pour `GameStarted`,
+`GameServices` filtre et ne republie que l'entreprise du joueur. Pour
+`RoundResolved`, l'événement doit porter le bilan complet, dont `GameLoop` a
+besoin pour les appels d'offres : le filtrage remonte donc dans `GameLoop`.
+
+**Les formations sont filtrées sur le staff du joueur.** Le bilan porte celles
+de tous les joueurs, et `TrainingOutcomeDto` ne dit pas à quelle entreprise
+appartient le consultant — le joueur lisait donc le nom d'un consultant qu'il
+n'avait jamais vu. La section appels d'offres, elle, nomme bien les concurrents :
+savoir qui a remporté quoi sert au tour suivant, alors que la progression du
+staff adverse est du bruit tant qu'on ne voit pas ce staff.
+
+**Aucune lecture clavier dans le handler.** `ShowRoundResultScreen` affiche et
+rend la main. Un `ReadLine` ici bloquerait le thread de réception SignalR et le
+`RoundStarted` du tour suivant n'arriverait jamais — c'est la raison pour
+laquelle `PlayRoundAsync` part déjà dans un `Task.Run`.

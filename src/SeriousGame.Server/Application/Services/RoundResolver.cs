@@ -62,9 +62,15 @@ public class RoundResolver
     /// trésorerie et en chiffre d'affaires — et libère ses consultants ; une formation terminée fait
     /// monter d'un cran la compétence enseignée. Les inscriptions prises à <paramref name="round"/>
     /// sont ignorées : comme un contrat, une formation ne commence qu'au tour suivant.
+    /// Les inscriptions clôturées <b>à ce tour</b> — et seulement celles qui ont effectivement fait
+    /// monter une compétence. L'appelant s'en sert pour le bilan du tour : l'information n'est pas
+    /// conservée dans le domaine, une inscription terminée ne gardant pas trace du tour où elle
+    /// s'est achevée.
     /// </summary>
-    public void AdvanceContractsAndTrainings(Game game, Round round)
+    public IReadOnlyList<TrainingEnrollment> AdvanceContractsAndTrainings(Game game, Round round)
     {
+        List<TrainingEnrollment> completedTrainings = [];
+
         foreach (Company company in game.Companies)
         {
             foreach (Contract contract in company.Contracts.Where(c => c.Status == ContractStatus.Active))
@@ -100,11 +106,13 @@ public class RoundResolver
                 else
                 {
                     consultantSkill.LevelUp();
+                    completedTrainings.Add(enrollment);
                 }
 
                 enrollment.Status = EnrollmentStatus.Completed;
             }
         }
+        return completedTrainings;
     }
     /// <summary>
     /// Prélève la masse salariale de chaque entreprise de la partie. Les salaires sont dus pour

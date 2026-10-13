@@ -205,6 +205,7 @@ public class GameFlowService : IGameFlowService
         }
 
         bool everyoneSubmitted;
+        RoundResultDto? result = null;
 
         lock (game)
         {
@@ -219,23 +220,19 @@ public class GameFlowService : IGameFlowService
             {
                 round.IsCompleted = true;
 
-                _roundResolver.AdvanceContractsAndTrainings(game, round);
+                var completedTrainings = _roundResolver.AdvanceContractsAndTrainings(game, round);
                 _roundResolver.ResolveTenders(round);
                 _roundResolver.PayDaysForStaffs(game);
+
+                // Dans le verrou : le bilan lit la trésorerie et le statut des consultants de
+                // toutes les entreprises, il doit en voir un état cohérent.
+                result = Mapper.ToResultDto(round, completedTrainings);
             }
         }
 
         await _hubContext.Clients.Group(game.Id).PlayerSubmitted(player.Nickname);
 
-        if (!everyoneSubmitted) return;
-
-        // TODO : attribution des appels d'offres, avancement des contrats et formations,
-        // salaires, puis bilan réel du tour.
-        var result = new RoundResultDto
-        {
-            RoundId = round.Id,
-            RoundOrder = round.Order
-        };
+        if (result is null) return;
 
         await _hubContext.Clients.Group(game.Id).RoundResolved(result);
 

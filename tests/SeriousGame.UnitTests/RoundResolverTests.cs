@@ -317,4 +317,42 @@ public class RoundResolverTests
         Assert.False(acme.IsBankrupt);
         Assert.False(globex.IsBankrupt);
     }
+    [Fact]
+    public void Advance_ReturnsTheTrainingsCompletedThisRound()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+        var game = round.Game;
+
+        var company = MakeCompany("Acme");
+        game.Companies.Add(company);
+
+        var consultant = MakeConsultant(company, Level.Basic);
+        var enrollment = AddEnrollment(company, consultant, remainingRounds: 1, startedAtRound: round.Order - 1);
+
+        var completed = _resolver.AdvanceContractsAndTrainings(game, round);
+
+        var reported = Assert.Single(completed);
+        Assert.Same(enrollment, reported);
+    }
+
+    [Fact]
+    public void Advance_ReportsNothingWhenATrainingOnlyCountsDown()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+        var game = round.Game;
+
+        var company = MakeCompany("Acme");
+        game.Companies.Add(company);
+
+        var consultant = MakeConsultant(company, Level.Basic);
+        var enrollment = AddEnrollment(company, consultant, remainingRounds: 2, startedAtRound: round.Order - 1);
+
+        var completed = _resolver.AdvanceContractsAndTrainings(game, round);
+
+        Assert.Empty(completed);
+        // La formation a bien avancé : c'est son achèvement qui n'est pas encore à annoncer.
+        Assert.Equal(1, enrollment.RemainingRounds);
+    }
 }

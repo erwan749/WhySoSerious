@@ -253,10 +253,67 @@ public class GameLoop
         ConsoleUI.WriteInfo(string.Format(ClientResources.PlayerSubmittedFormat, nickname));
     }
 
-    private static void OnRoundResolved(RoundResultDto result)
+    private void OnRoundResolved(RoundResultDto result)
     {
-        // TODO US16 : bilan réel du tour (contrats gagnés/perdus, trésorerie, classement).
-        ConsoleUI.WriteInfo(PlaceholderFor(TurnPhase.Resolution));
+        var myCompany = result.Companies.FirstOrDefault(c => c.OwnerId == _session.PlayerId);
+
+        if (myCompany is not null) _session.SetMyCompany(myCompany);
+        ShowRoundResultScreen(result);
+    }
+
+    private void ShowRoundResultScreen(RoundResultDto result)
+    {
+        ConsoleUI.WriteHeader(string.Format(ClientResources.RoundResultHeaderFormat, result.RoundOrder));
+
+        // Annuaire construit une fois : le bilan ne transporte que l'identifiant du gagnant,
+        // le nom se trouve dans la liste des entreprises.
+        var companyNames = result.Companies.ToDictionary(company => company.Id, company => company.Name);
+
+        ConsoleUI.WriteInfo(ClientResources.TendersSectionHeader);
+
+        foreach (var outcome in result.TenderOutcomes)
+        {
+            if (outcome.WinningCompanyId is not null
+                && companyNames.TryGetValue(outcome.WinningCompanyId, out var winnerName))
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TenderOutcomeWonFormat, outcome.TenderName, winnerName));
+            }
+            else
+            {
+                // Aucun candidat, ou aucun candidat admissible : l'appel d'offres reste au bilan.
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TenderOutcomeNoWinnerFormat, outcome.TenderName));
+            }
+        }
+
+        ConsoleUI.WriteInfo(ClientResources.TrainingsSectionHeader);
+
+        // Le bilan porte les formations de tous les joueurs : on ne garde que les siennes,
+        // le nom d'un consultant adverse n'étant pas exploitable côté joueur.
+        var myConsultantIds = _session.MyCompany?.Staff.Select(consultant => consultant.Id).ToHashSet() ?? [];
+
+        var myTrainings = result.CompletedTrainings
+            .Where(training => myConsultantIds.Contains(training.ConsultantId))
+            .ToList();
+
+        if (myTrainings.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoCompletedTrainingMessage);
+        }
+        else
+        {
+            foreach (var training in myTrainings)
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.TrainingOutcomeFormat, training.ConsultantFullName, training.SkillName));
+            }
+        }
+
+        if (_session.MyCompany is null) return;
+
+        ConsoleUI.WriteInfo(string.Format(ClientResources.TreasuryFormat, _session.MyCompany.Treasury));
+        ConsoleUI.WriteInfo(string.Format(ClientResources.RevenueFormat, _session.MyCompany.Revenue));
     }
 
     private void OnGameEnded(RankingDto ranking)
