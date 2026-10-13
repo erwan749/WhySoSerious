@@ -390,6 +390,24 @@ Games available:
   <data name="RankingLineFormat" xml:space="preserve">
     <value>#{0} — {1} ({2} revenue)</value>
   </data>
+  <data name="CandidatesSectionHeader" xml:space="preserve">
+    <value>Recruitment</value>
+  </data>
+  <data name="NoCandidatesMessage" xml:space="preserve">
+    <value>No candidates available this round.</value>
+  </data>
+  <data name="CandidateDetailFormat" xml:space="preserve">
+    <value>{0}. {1} - {2} € / month</value>
+  </data>
+  <data name="RecruitCandidatePrompt" xml:space="preserve">
+    <value>Which candidate do you want to recruit? (number, or press Enter to skip)</value>
+  </data>
+  <data name="CandidateChosenMessage" xml:space="preserve">
+    <value>You want to recruit {0}.</value>
+  </data>
+  <data name="RecruitmentDecisionSummaryFormat" xml:space="preserve">
+    <value>Recruit {0} ({1} € / month)</value>
+  </data>
   <data name="RoundResultHeaderFormat" xml:space="preserve">
     <value>Round {0} results</value>
   </data>

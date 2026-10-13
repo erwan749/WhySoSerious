@@ -88,6 +88,33 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à You want to recruit {0}..
+        /// </summary>
+        internal static string CandidateChosenMessage {
+            get {
+                return ResourceManager.GetString("CandidateChosenMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à {0}. {1} - {2} € / month.
+        /// </summary>
+        internal static string CandidateDetailFormat {
+            get {
+                return ResourceManager.GetString("CandidateDetailFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Recruitment.
+        /// </summary>
+        internal static string CandidatesSectionHeader {
+            get {
+                return ResourceManager.GetString("CandidatesSectionHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Cannot invoke &apos;{0}&apos;: connection state = {1}.
         /// </summary>
         internal static string CannotInvokeError {
@@ -455,6 +482,15 @@ namespace Client.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à No candidates available this round..
+        /// </summary>
+        internal static string NoCandidatesMessage {
+            get {
+                return ResourceManager.GetString("NoCandidatesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à No Company found.
         /// </summary>
         internal static string NoCompanyError {
@@ -604,6 +640,24 @@ namespace Client.Resources {
         internal static string ReconnectingWarning {
             get {
                 return ResourceManager.GetString("ReconnectingWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Which candidate do you want to recruit? (number, or press Enter to skip).
+        /// </summary>
+        internal static string RecruitCandidatePrompt {
+            get {
+                return ResourceManager.GetString("RecruitCandidatePrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Recruit {0} ({1} € / month).
+        /// </summary>
+        internal static string RecruitmentDecisionSummaryFormat {
+            get {
+                return ResourceManager.GetString("RecruitmentDecisionSummaryFormat", resourceCulture);
             }
         }
         

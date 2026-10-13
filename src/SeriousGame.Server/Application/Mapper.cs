@@ -116,7 +116,16 @@ public static class Mapper
         Order = round.Order,
         TotalRounds = round.Game.RoundsNumber,
         Tenders = round.Tenders.Select(ToDto).ToList(),
-        Trainings = round.Trainings.Select(ToDto).ToList()
+        Trainings = round.Trainings.Select(ToDto).ToList(),
+        Candidates = round.Candidates.Select(ToDto).ToList()
+    };
+    
+    public static CandidateDto ToDto(Candidate candidate) => new()
+    {
+        Id = candidate.Id,
+        FullName = candidate.FullName,
+        SalaryRequirement = candidate.SalaryRequirement,
+        Skills = candidate.Skills.Select(ToDto).ToList()
     };
     /// <summary>
     /// Projette une formation qui vient de s'achever : le consultant concerné et la compétence qui

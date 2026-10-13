@@ -16,5 +16,7 @@ public class GameOptions
     public int TrainingBaseCost { get; init; } = 800;
     public int TrainingRoundsNumber { get; init; } = 1;
     public int TrainingNumberPerPlayer { get; init; } = 1;
+    
+    public int CandidateNumberPerRound { get; init; } = 3;
 
 }

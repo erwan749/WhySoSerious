@@ -259,7 +259,18 @@ public class GameFlowService : IGameFlowService
     /// delegue la construction du catalogue a RoundFactory
     /// </summary>
 
-    private Round CreateRound(Game game) => RoundFactory.Create(game, _appMemory.TenderSeeds, _gameOptions, Random.Shared);
+    private Round CreateRound(Game game)
+    {
+        var round = RoundFactory.Create(game, _appMemory.TenderSeeds, _gameOptions, Random.Shared);
+
+        foreach (var candidate in CandidateFactory.Build(
+                     game, _appMemory.CandidateSeeds, _appMemory.Skills, _gameOptions, Random.Shared))
+        {
+            round.Candidates.Add(candidate);
+        }
+
+        return round;
+    }
 
     private Task StartRound(Game game, Round round)
     {

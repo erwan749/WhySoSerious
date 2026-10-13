@@ -55,6 +55,7 @@ public class GameLoop
         {
             UnsubscribeFromGameEvents();
             await _gameServices.DisconnectAsync();
+            _session.LeaveCurrentGame();
         }
     }
 
@@ -132,6 +133,7 @@ public class GameLoop
 
     await RunTenderApplicationStepAsync(round);
     await RunTrainingEnrollmentStepAsync(round);
+    await RunRecruitmentStepAsync(round);
 }
 
     private async Task RunTenderApplicationStepAsync(RoundDto round)
@@ -245,6 +247,30 @@ public class GameLoop
         }
     }
 
+    private Task RunRecruitmentStepAsync(RoundDto round)
+    {
+        if (round.Candidates.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoCandidatesMessage);
+            return Task.CompletedTask;
+        }
+
+        var candidates = round.Candidates.ToList();
+
+        var candidateIndex = ReadIndex(ClientResources.RecruitCandidatePrompt, candidates.Count);
+        if (candidateIndex is null) return Task.CompletedTask;
+
+        var candidate = candidates[candidateIndex.Value];
+
+        ConsoleUI.WriteInfo(string.Format(ClientResources.CandidateChosenMessage, candidate.FullName));
+        _roundDecisions.Add(string.Format(
+            ClientResources.RecruitmentDecisionSummaryFormat,
+            candidate.FullName,
+            candidate.SalaryRequirement));
+
+        return Task.CompletedTask;
+    }
+    
     private List<ConsultantDto> GetFreeConsultants() =>
         _session.MyCompany?.Staff.Where(c => c.Status == ConsultantStatus.Free).ToList() ?? [];
 
@@ -438,6 +464,38 @@ public class GameLoop
                     training.Name,
                     training.Cost,
                     training.RoundsNumber));
+
+                number++;
+            }
+            
+        }
+        
+        Console.WriteLine();
+        ConsoleUI.WriteInfo(ClientResources.CandidatesSectionHeader);
+        Console.WriteLine();
+
+        if (round.Candidates.Count == 0)
+        {
+            ConsoleUI.WriteInfo(ClientResources.NoCandidatesMessage);
+        }
+        else
+        {
+            var number = 1;
+
+            foreach (var candidate in round.Candidates)
+            {
+                ConsoleUI.WriteInfo(string.Format(
+                    ClientResources.CandidateDetailFormat,
+                    number,
+                    candidate.FullName,
+                    candidate.SalaryRequirement));
+
+                var skillsLabel = candidate.Skills.Count > 0
+                    ? string.Join(", ", candidate.Skills.Select(s =>
+                        string.Format(ClientResources.SkillWithLevelFormat, s.Skill.Name, s.Level)))
+                    : ClientResources.NoSkillsLabel;
+
+                ConsoleUI.WriteInfo($"   {string.Format(ClientResources.ConsultantSkillsFormat, skillsLabel)}");
 
                 number++;
             }
