@@ -399,6 +399,12 @@ namespace Client.Resources {
             }
         }
         
+        internal static string NoCandidatesMessage {
+            get {
+                return ResourceManager.GetString("NoCandidatesMessage", resourceCulture);
+            }
+        }
+        
         internal static string ConsultantSkillsFormat {
             get {
                 return ResourceManager.GetString("ConsultantSkillsFormat", resourceCulture);
@@ -525,13 +531,12 @@ namespace Client.Resources {
             }
         }
         
-        
         internal static string TendersSectionHeader {
             get {
                 return ResourceManager.GetString("TendersSectionHeader", resourceCulture);
             }
         }
-
+        
         internal static string TrainingsSectionHeader {
             get {
                 return ResourceManager.GetString("TrainingsSectionHeader", resourceCulture);
@@ -571,6 +576,42 @@ namespace Client.Resources {
         internal static string RankingLineFormat {
             get {
                 return ResourceManager.GetString("RankingLineFormat", resourceCulture);
+            }
+        }
+        
+        internal static string CandidatesSectionHeader {
+            get {
+                return ResourceManager.GetString("CandidatesSectionHeader", resourceCulture);
+            }
+        }
+        
+        internal static string Recruitment {
+            get {
+                return ResourceManager.GetString("Recruitment", resourceCulture);
+            }
+        }
+        
+        internal static string CandidateDetailFormat {
+            get {
+                return ResourceManager.GetString("CandidateDetailFormat", resourceCulture);
+            }
+        }
+        
+        internal static string RecruitCandidatePrompt {
+            get {
+                return ResourceManager.GetString("RecruitCandidatePrompt", resourceCulture);
+            }
+        }
+        
+        internal static string CandidateChosenMessage {
+            get {
+                return ResourceManager.GetString("CandidateChosenMessage", resourceCulture);
+            }
+        }
+        
+        internal static string RecruitmentDecisionSummaryFormat {
+            get {
+                return ResourceManager.GetString("RecruitmentDecisionSummaryFormat", resourceCulture);
             }
         }
     }
