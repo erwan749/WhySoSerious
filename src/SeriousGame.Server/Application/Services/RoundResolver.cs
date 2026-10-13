@@ -56,4 +56,54 @@ public class RoundResolver
             });
         }
     }
+    /// <summary>
+    /// Fait vivre la partie d'un tour : décrémente la durée restante de chaque contrat actif et de
+    /// chaque formation en cours. Un contrat arrivé à terme verse son budget à l'entreprise — en
+    /// trésorerie et en chiffre d'affaires — et libère ses consultants ; une formation terminée fait
+    /// monter d'un cran la compétence enseignée. Les inscriptions prises à <paramref name="round"/>
+    /// sont ignorées : comme un contrat, une formation ne commence qu'au tour suivant.
+    /// </summary>
+    public void AdvanceContractsAndTrainings(Game game, Round round)
+    {
+        foreach (Company company in game.Companies)
+        {
+            foreach (Contract contract in company.Contracts.Where(c => c.Status == ContractStatus.Active))
+            {
+                contract.RemainingRounds--;
+
+                if (contract.RemainingRounds > 0) continue;
+
+                // Alimente trésorerie et chiffre d'affaires : c'est ce dernier qui classe à la fin.
+                company.RecordContractRevenue(contract.Tender.Budget);
+                contract.Status = ContractStatus.Completed;
+            }
+
+            foreach (TrainingEnrollment enrollment in company.TrainingEnrollments.Where(e => e.Status == EnrollmentStatus.InProgress))
+            {
+                // Inscription prise à ce tour : elle ne commence qu'au suivant, comme un contrat.
+                if (enrollment.StartedAtRound == round.Order) continue;
+
+                enrollment.RemainingRounds--;
+
+                if (enrollment.RemainingRounds > 0) continue;
+
+                ConsultantSkill? consultantSkill = enrollment.Consultant.Skills
+                    .FirstOrDefault(skill => skill.Skill.Id == enrollment.Training.Skill.Id);
+
+                if (consultantSkill is null)
+                {
+                    // Le validateur l'interdit à l'inscription : si on passe ici, c'est un bug ailleurs.
+                    _logger.LogWarning(
+                        "Training {TrainingName} completed for {ConsultantName}, who no longer has the skill",
+                        enrollment.Training.Name, enrollment.Consultant.FullName);
+                }
+                else
+                {
+                    consultantSkill.LevelUp();
+                }
+
+                enrollment.Status = EnrollmentStatus.Completed;
+            }
+        }
+    }
 }

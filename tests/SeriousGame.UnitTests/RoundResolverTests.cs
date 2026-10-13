@@ -42,12 +42,12 @@ public class RoundResolverTests
         return round;
     }
 
-    private static Tender MakeTender(int roundsNumber = 2)
+    private static Tender MakeTender(int roundsNumber = 2, int budget = 15_000)
     {
         var tender = new Tender
         {
             Name = "AO",
-            Budget = 15_000,
+            Budget = budget,
             RoundsNumber = roundsNumber,
             RequiredConsultants = 1
         };
@@ -152,5 +152,148 @@ public class RoundResolverTests
         _resolver.ResolveTenders(round);
 
         Assert.Empty(round.Applications);
+    }
+    private static Contract AddContract(Company company, Consultant consultant, int remainingRounds, int budget = 15_000)
+    {
+        var tender = MakeTender(budget: budget);
+
+        var contract = new Contract
+        {
+            Company = company,
+            Tender = tender,
+            AssignedConsultants = [consultant],
+            RemainingRounds = remainingRounds
+        };
+
+        company.Contracts.Add(contract);
+
+        return contract;
+    }
+
+    private static TrainingEnrollment AddEnrollment(
+        Company company,
+        Consultant consultant,
+        int remainingRounds,
+        int startedAtRound)
+    {
+        var enrollment = new TrainingEnrollment
+        {
+            Company = company,
+            Consultant = consultant,
+            Training = new Training
+            {
+                Name = "Perfectionnement HTML",
+                Skill = Html,
+                Cost = 800,
+                RoundsNumber = 1
+            },
+            RemainingRounds = remainingRounds,
+            StartedAtRound = startedAtRound
+        };
+
+        company.TrainingEnrollments.Add(enrollment);
+
+        return enrollment;
+    }
+
+    [Fact]
+    public void Advance_CountsDownAnOngoingContractWithoutPayingIt()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+        var game = round.Game;
+
+        var company = MakeCompany("Acme");
+        game.Companies.Add(company);
+
+        var contract = AddContract(company, MakeConsultant(company, Level.Advanced), remainingRounds: 2);
+
+        _resolver.AdvanceContractsAndTrainings(game, round);
+
+        Assert.Equal(1, contract.RemainingRounds);
+        Assert.Equal(ContractStatus.Active, contract.Status);
+        Assert.Equal(0, company.Revenue);
+    }
+
+    [Fact]
+    public void Advance_PaysAndClosesAFinishedContract()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+        var game = round.Game;
+
+        var company = MakeCompany("Acme");
+        game.Companies.Add(company);
+
+        var consultant = MakeConsultant(company, Level.Advanced);
+        var contract = AddContract(company, consultant, remainingRounds: 1, budget: 22_000);
+        var treasuryBefore = company.Treasury;
+
+        _resolver.AdvanceContractsAndTrainings(game, round);
+
+        Assert.Equal(ContractStatus.Completed, contract.Status);
+        Assert.Equal(22_000, company.Revenue);
+        Assert.Equal(treasuryBefore + 22_000, company.Treasury);
+
+        // Le contrat n'étant plus actif, ses consultants redeviennent mobilisables.
+        Assert.False(company.IsConsultantBusy(consultant));
+    }
+
+    [Fact]
+    public void Advance_LeavesAnEnrollmentTakenThisRoundUntouched()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+        var game = round.Game;
+
+        var company = MakeCompany("Acme");
+        game.Companies.Add(company);
+
+        // round.Order vaut 1 : l'inscription vient d'être prise, elle ne commence qu'au tour suivant.
+        var enrollment = AddEnrollment(company, MakeConsultant(company, Level.Basic), remainingRounds: 1, startedAtRound: round.Order);
+
+        _resolver.AdvanceContractsAndTrainings(game, round);
+
+        Assert.Equal(1, enrollment.RemainingRounds);
+        Assert.Equal(EnrollmentStatus.InProgress, enrollment.Status);
+    }
+
+    [Fact]
+    public void Advance_LevelsUpTheSkillWhenATrainingEnds()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+        var game = round.Game;
+
+        var company = MakeCompany("Acme");
+        game.Companies.Add(company);
+
+        var consultant = MakeConsultant(company, Level.Basic);
+        var enrollment = AddEnrollment(company, consultant, remainingRounds: 1, startedAtRound: round.Order - 1);
+
+        _resolver.AdvanceContractsAndTrainings(game, round);
+
+        Assert.Equal(EnrollmentStatus.Completed, enrollment.Status);
+        Assert.Equal(Level.Intermediate, consultant.Skills.Single().Level);
+        Assert.False(company.IsConsultantBusy(consultant));
+    }
+
+    [Fact]
+    public void Advance_IgnoresAlreadyCompletedContracts()
+    {
+        var tender = MakeTender();
+        var round = MakeRound(tender);
+        var game = round.Game;
+
+        var company = MakeCompany("Acme");
+        game.Companies.Add(company);
+
+        var contract = AddContract(company, MakeConsultant(company, Level.Advanced), remainingRounds: 0);
+        contract.Status = ContractStatus.Completed;
+
+        _resolver.AdvanceContractsAndTrainings(game, round);
+
+        Assert.Equal(0, contract.RemainingRounds);
+        Assert.Equal(0, company.Revenue);
     }
 }

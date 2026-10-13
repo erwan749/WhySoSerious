@@ -87,3 +87,67 @@ plus élevé l'emporte.
 - L'avancement des contrats (US14), les salaires (US15) et le bilan du tour (US16) ne sont pas
   encore là : un contrat créé ne se termine jamais et ne rapporte rien. Les points d'insertion sont
   marqués par des TODO dans `SubmitDecisions`.
+  ## Avancement des contrats et des formations (US14)
+
+### Ordre de résolution
+
+Quand le dernier joueur valide ses décisions, `GameFlowService.SubmitDecisions`
+exécute la résolution dans cet ordre, à l'intérieur d'un `lock (game)` :
+
+1. **Avancement** — `RoundResolver.AdvanceContractsAndTrainings(game, round)`
+2. **Attribution** — `RoundResolver.ResolveTenders(round)`
+3. *(à venir US15)* paiement des salaires
+4. Envoi du bilan aux clients
+
+Cet ordre n'est pas arbitraire : c'est lui qui implémente la règle
+« ce qu'on prend à un tour démarre au tour suivant ».
+
+### Règle « démarre au tour suivant »
+
+| Élément | Créé par | Quand | Garde-fou |
+|---|---|---|---|
+| Contrat | `ResolveTenders` | **après** l'avancement | aucun : l'ordre suffit |
+| Formation | validation du joueur | **avant** l'avancement | `StartedAtRound` |
+
+Un contrat est créé par l'attribution, qui tourne *après* l'avancement : il ne
+peut donc pas être décrémenté au tour où il est signé. Aucun champ
+supplémentaire n'est nécessaire.
+
+Une inscription en formation, elle, est créée pendant la phase de décision du
+tour courant : elle existe déjà quand l'avancement s'exécute. On mémorise donc
+le tour d'inscription dans `TrainingEnrollment.StartedAtRound` et l'avancement
+ignore les inscriptions dont `StartedAtRound == round.Order`.
+
+### Avancement des contrats
+
+Pour chaque contrat `Active` de chaque entreprise :
+
+- `RemainingRounds` est décrémenté ;
+- s'il atteint `0`, le contrat passe à `Completed` et l'entreprise encaisse le
+  budget de l'appel d'offres via `Company.RecordContractRevenue(int)`, qui
+  crédite **à la fois** la trésorerie et le chiffre d'affaires (le CA sert au
+  classement final, la trésorerie aux dépenses).
+
+Les consultants ne sont pas « libérés » explicitement : la disponibilité est
+calculée à la demande par `Company.IsConsultantBusy`, qui ne regarde que les
+contrats `Active` et les formations `InProgress`. Le passage à `Completed`
+rend donc les consultants réaffectables dès le tour suivant.
+
+### Avancement des formations
+
+Pour chaque inscription `InProgress` dont `StartedAtRound != round.Order` :
+
+- `RemainingRounds` est décrémenté ;
+- s'il atteint `0`, l'inscription passe à `Completed` et la compétence du
+  consultant monte d'un niveau via `ConsultantSkill.LevelUp()`.
+
+`LevelUp()` porte l'invariant de domaine (pas de montée au-delà de `Expert`) :
+le niveau a un `private set`, il n'est modifiable que par cette méthode.
+
+### Limite connue
+
+Les chiffres affichés en cours de partie (écran « Mon entreprise ») ne
+reflètent pas encore ces évolutions : le client garde l'instantané
+`CompanyDto` reçu au `GameStarted`, et `RoundResultDto` est encore envoyé
+vide. Le classement final, construit côté serveur, est quant à lui juste.
+La mise à jour du bilan en cours de partie est le périmètre de l'**US16**.

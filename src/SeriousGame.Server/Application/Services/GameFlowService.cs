@@ -219,7 +219,7 @@ public class GameFlowService : IGameFlowService
             {
                 round.IsCompleted = true;
 
-                // TODO US14 : avancement des contrats et formations.
+                _roundResolver.AdvanceContractsAndTrainings(game, round);
                 _roundResolver.ResolveTenders(round);
                 // TODO US15 : paiement des salaires.
             }
